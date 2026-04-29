@@ -1,0 +1,469 @@
+id: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+name: core_person
+title: Core Person Vocabulary
+description: >-
+  LinkML approximation of the SEMIC Core Person Vocabulary 2.1.1.
+  The Core Person Vocabulary captures the fundamental characteristics
+  of a person, e.g. name, gender, date of birth, etc. It is the
+  ontological backbone for several Core Vocabularies and Application
+  Profiles published by SEMIC.
+license: https://creativecommons.org/licenses/by/4.0/
+version: 2.1.1
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  cpv: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/
+  m8g: http://data.europa.eu/m8g/
+  person: http://www.w3.org/ns/person#
+  foaf: http://xmlns.com/foaf/0.1/
+  locn: http://www.w3.org/ns/locn#
+  adms: http://www.w3.org/ns/adms#
+  dcterms: http://purl.org/dc/terms/
+  skos: http://www.w3.org/2004/02/skos/core#
+  rdfs: http://www.w3.org/2000/01/rdf-schema#
+  rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+  xsd: http://www.w3.org/2001/XMLSchema#
+  schema: https://schema.org/
+  owl: http://www.w3.org/2002/07/owl#
+
+default_prefix: cpv
+default_range: string
+
+imports:
+  - linkml:types
+
+# --------------------------------------------------------------------
+# Classes
+# --------------------------------------------------------------------
+
+classes:
+
+  Person:
+    class_uri: person:Person
+    description: >-
+      An individual human being who may be dead or alive, but not
+      imaginary.
+    slots:
+      - identifier
+      - alternativeName
+      - birthName
+      - citizenship
+      - contactPoint
+      - countryOfBirth
+      - countryOfDeath
+      - dateOfBirth
+      - dateOfDeath
+      - domicile
+      - familyName
+      - fullName
+      - gender
+      - givenName
+      - matronymicName
+      - patronymicName
+      - placeOfBirth
+      - placeOfDeath
+      - residency
+      - sex
+
+  Identifier:
+    class_uri: adms:Identifier
+    description: >-
+      A character string used to uniquely identify one instance of
+      an object within an identification scheme.
+    slots:
+      - schemeUri
+      - schemeName
+      - dateOfIssue
+      - identifies
+      - issuingAuthorityUri
+
+  Address:
+    class_uri: locn:Address
+    description: >-
+      An "address representation" as conceptually defined by the
+      INSPIRE Address Representation data type.
+    slots:
+      - thoroughfare
+      - administrativeUnitLevel1
+      - administrativeUnitLevel2
+      - addressArea
+      - postName
+      - locatorName
+      - fullAddress
+
+  ContactPoint:
+    class_uri: m8g:ContactPoint
+    description: >-
+      Information (e.g. e-mail address, telephone number) of a person
+      or department through which the user can get in touch with.
+    slots:
+      - contactPage
+      - hasEmail
+      - hasTelephone
+
+  Agent:
+    class_uri: foaf:Agent
+    description: >-
+      Any entity carrying out actions, typically a person or an
+      organisation.
+    slots:
+      - agentName
+      - agentType
+
+  Jurisdiction:
+    class_uri: dcterms:Jurisdiction
+    description: >-
+      The legal authority — usually a public body — defined by a
+      geographical extent within which it has the power to make legal
+      decisions.
+    slots:
+      - jurisdictionId
+      - jurisdictionName
+
+  Location:
+    class_uri: dcterms:Location
+    description: >-
+      A region or named place. It can be described by a geographic
+      name or geographic identifier.
+    slots:
+      - geographicName
+      - geographicIdentifier
+
+  Document:
+    class_uri: foaf:Document
+    description: A document, e.g. a web page.
+
+  Concept:
+    class_uri: skos:Concept
+    description: >-
+      A SKOS concept, used for controlled vocabularies (e.g. for sex,
+      gender).
+
+  GenericDate:
+    class_uri: m8g:GenericDate
+    description: >-
+      The generic date data type is the union of xsd:date,
+      xsd:gYearMonth and xsd:gYear.
+
+# --------------------------------------------------------------------
+# Slots
+# --------------------------------------------------------------------
+
+slots:
+
+  # ------- Person slots -------
+
+  identifier:
+    slot_uri: dcterms:identifier
+    title: identifier
+    description: The unambiguous structured reference to the Person.
+    range: Identifier
+    multivalued: true
+
+  alternativeName:
+    slot_uri: dcterms:alternative
+    title: alternative name
+    description: Any name by which a Person is known, other than their full name.
+    range: string
+    multivalued: true
+
+  birthName:
+    slot_uri: person:birthName
+    title: birth name
+    description: Full name of the Person given upon their birth.
+    range: string
+    multivalued: true
+
+  citizenship:
+    slot_uri: person:citizenship
+    title: citizenship
+    description: >-
+      The Jurisdiction that has conferred citizenship rights on the
+      Person such as the right to vote, to receive certain protection
+      from the community or the issuance of a passport.
+    range: Jurisdiction
+    multivalued: true
+
+  contactPoint:
+    slot_uri: m8g:contactPoint
+    title: contact point
+    description: The main contact information of the resource.
+    range: ContactPoint
+    multivalued: true
+
+  countryOfBirth:
+    slot_uri: person:countryOfBirth
+    title: country of birth
+    description: The country in which the Person was born.
+    range: Location
+    multivalued: true
+
+  countryOfDeath:
+    slot_uri: person:countryOfDeath
+    title: country of death
+    description: The country in which the Person died.
+    range: Location
+    multivalued: true
+
+  dateOfBirth:
+    slot_uri: m8g:birthDate
+    title: date of birth
+    description: The point in time on which the Person was born.
+    range: GenericDate
+    multivalued: true
+    comments:
+      - >-
+        The date of birth could be expressed as date, gYearMonth or
+        gYear, e.g. 1980-09-16, 1980-09, 1980.
+
+  dateOfDeath:
+    slot_uri: m8g:deathDate
+    title: date of death
+    description: The point in time on which the Person died.
+    range: GenericDate
+    multivalued: true
+
+  domicile:
+    slot_uri: m8g:domicile
+    title: domicile
+    description: The place that the Person treats as permanent home.
+    range: Address
+    multivalued: true
+
+  familyName:
+    slot_uri: foaf:familyName
+    title: family name
+    description: The hereditary surname of a family.
+    range: string
+    multivalued: true
+
+  fullName:
+    slot_uri: foaf:name
+    title: full name
+    description: The complete name of the Person as one string.
+    range: string
+    multivalued: true
+
+  gender:
+    slot_uri: m8g:gender
+    title: gender
+    description: The identities, expressions and societal roles of the Person.
+    range: Concept
+    multivalued: true
+
+  givenName:
+    slot_uri: foaf:givenName
+    title: given name
+    description: The name(s) that identify the Person within a family with a common surname.
+    range: string
+    multivalued: true
+
+  matronymicName:
+    slot_uri: m8g:matronymicName
+    title: matronymic name
+    description: Name based on the given name of the Person's mother.
+    range: string
+    multivalued: true
+
+  patronymicName:
+    slot_uri: person:patronymicName
+    title: patronymic name
+    description: Name based on the given name of the Person's father.
+    range: string
+    multivalued: true
+
+  placeOfBirth:
+    slot_uri: person:placeOfBirth
+    title: place of birth
+    description: The Location where the Person was born.
+    range: Location
+    multivalued: true
+
+  placeOfDeath:
+    slot_uri: person:placeOfDeath
+    title: place of death
+    description: The Location where the Person died.
+    range: Location
+    multivalued: true
+
+  residency:
+    slot_uri: person:residency
+    title: residency
+    description: Jurisdiction where the Person has their dwelling.
+    range: Jurisdiction
+    multivalued: true
+
+  sex:
+    slot_uri: m8g:sex
+    title: sex
+    description: The organism's biological sex.
+    range: Concept
+    multivalued: true
+
+  # ------- Identifier slots -------
+
+  schemeUri:
+    slot_uri: dcterms:conformsTo
+    title: scheme URI
+    description: URI of the scheme used to construct the identifier.
+    range: uri
+    multivalued: true
+
+  schemeName:
+    slot_uri: rdfs:label
+    title: scheme name
+    description: Name of the scheme used to construct the identifier.
+    range: string
+    multivalued: true
+
+  dateOfIssue:
+    slot_uri: dcterms:issued
+    title: date of issue
+    description: The date on which the Identifier was assigned.
+    range: date
+    multivalued: true
+
+  identifies:
+    slot_uri: m8g:identifies
+    title: identifies
+    description: The entity that is referenced by the Identifier.
+    range: Person
+    multivalued: true
+
+  issuingAuthorityUri:
+    slot_uri: dcterms:creator
+    title: issuing authority URI
+    description: The reference in the form of a Uniform Resource Identifier to the issuing authority.
+    range: Agent
+    multivalued: true
+
+  # ------- Address slots -------
+
+  thoroughfare:
+    slot_uri: locn:thoroughfare
+    title: thoroughfare
+    description: The name of a passage or way through from one location to another.
+    range: string
+    multivalued: true
+
+  administrativeUnitLevel1:
+    slot_uri: locn:adminUnitL1
+    title: administrative unit level 1
+    description: The name of the uppermost level of the address, almost always a country.
+    range: string
+    multivalued: true
+
+  administrativeUnitLevel2:
+    slot_uri: locn:adminUnitL2
+    title: administrative unit level 2
+    description: >-
+      The name of a secondary level/region of the address, usually a
+      county, state or other such area that typically encompasses
+      several localities.
+    range: string
+    multivalued: true
+
+  addressArea:
+    slot_uri: locn:addressArea
+    title: address area
+    description: The name of a geographic area that groups Addresses.
+    range: string
+    multivalued: true
+
+  postName:
+    slot_uri: locn:postName
+    title: post name
+    description: >-
+      A name created and maintained for postal purposes to identify a
+      subdivision of addresses and postal delivery points.
+    range: string
+    multivalued: true
+
+  locatorName:
+    slot_uri: locn:locatorName
+    title: locator name
+    description: >-
+      Proper noun(s) applied to the real world entity identified by
+      the locator. The locator name could be the name of the property
+      or complex, of the building or part of the building, or it could
+      be the name of a room inside a building.
+    range: string
+    multivalued: true
+
+  fullAddress:
+    slot_uri: locn:fullAddress
+    title: full address
+    description: The complete address written as a string.
+    range: string
+    multivalued: true
+
+  # ------- ContactPoint slots -------
+
+  contactPage:
+    slot_uri: m8g:contactPage
+    title: contact page
+    description: A web page that could be used to reach out the Contact Point.
+    range: Document
+    multivalued: true
+
+  hasEmail:
+    slot_uri: m8g:email
+    title: has email
+    description: An electronic address through which the Contact Point can be contacted.
+    range: string
+    multivalued: true
+
+  hasTelephone:
+    slot_uri: m8g:telephone
+    title: has telephone
+    description: A telephone number through which the Contact Point can be contacted.
+    range: string
+    multivalued: true
+
+  # ------- Agent slots -------
+
+  agentName:
+    slot_uri: dcterms:title
+    title: name
+    description: The noun given to the Agent.
+    range: string
+    multivalued: true
+
+  agentType:
+    slot_uri: dcterms:type
+    title: type
+    description: A classification assigned to an Agent.
+    range: Concept
+    multivalued: true
+
+  # ------- Jurisdiction slots -------
+
+  jurisdictionId:
+    slot_uri: dcterms:identifier
+    title: id
+    description: A reference in the form of a Uniform Resource Identifier to the Jurisdiction.
+    range: uri
+    multivalued: true
+
+  jurisdictionName:
+    slot_uri: rdfs:label
+    title: name
+    description: A string of characters that represents a Jurisdiction.
+    range: string
+    multivalued: true
+
+  # ------- Location slots -------
+
+  geographicName:
+    slot_uri: locn:geographicName
+    title: geographic name
+    description: A textual description for a Location.
+    range: string
+    multivalued: true
+
+  geographicIdentifier:
+    slot_uri: rdfs:seeAlso
+    title: geographic identifier
+    description: A reference in the form of a Uniform Resource Identifier to the Location.
+    range: uri
+    multivalued: true

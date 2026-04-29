@@ -1,0 +1,15 @@
+# Changes here will be overwritten by Copier
+_commit: v0.4.2
+_src_path: https://github.com/linkml/linkml-project-copier
+add_example: false
+copyright_year: '2026'
+email: nicolas.matentzoglu@gmail.com
+full_name: Nico Matentzoglu
+gh_action_docs_preview: false
+gh_action_pypi: false
+github_org: matentzn
+license: MIT
+project_description: LinkML approximation of SEMIC Core Person Vocabulary 2.1.1
+project_name: core-person
+project_slug: core_person
+
