@@ -23,7 +23,6 @@ prefixes:
   rdfs: http://www.w3.org/2000/01/rdf-schema#
   rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
   xsd: http://www.w3.org/2001/XMLSchema#
-  schema: https://schema.org/
   owl: http://www.w3.org/2002/07/owl#
 
 default_prefix: cpv
@@ -31,6 +30,18 @@ default_range: string
 
 imports:
   - linkml:types
+
+# --------------------------------------------------------------------
+# Custom types
+# --------------------------------------------------------------------
+
+types:
+  LangString:
+    name: LangString
+    typeof: string
+    uri: rdf:langString
+    description: A natural-language string with an optional language tag.
+    base: str
 
 # --------------------------------------------------------------------
 # Classes
@@ -164,14 +175,14 @@ slots:
     slot_uri: dcterms:alternative
     title: alternative name
     description: Any name by which a Person is known, other than their full name.
-    range: string
+    range: LangString
     multivalued: true
 
   birthName:
     slot_uri: person:birthName
     title: birth name
     description: Full name of the Person given upon their birth.
-    range: string
+    range: LangString
     multivalued: true
 
   citizenship:
@@ -234,14 +245,14 @@ slots:
     slot_uri: foaf:familyName
     title: family name
     description: The hereditary surname of a family.
-    range: string
+    range: LangString
     multivalued: true
 
   fullName:
     slot_uri: foaf:name
     title: full name
     description: The complete name of the Person as one string.
-    range: string
+    range: LangString
     multivalued: true
 
   gender:
@@ -255,21 +266,21 @@ slots:
     slot_uri: foaf:givenName
     title: given name
     description: The name(s) that identify the Person within a family with a common surname.
-    range: string
+    range: LangString
     multivalued: true
 
   matronymicName:
     slot_uri: m8g:matronymicName
     title: matronymic name
     description: Name based on the given name of the Person's mother.
-    range: string
+    range: LangString
     multivalued: true
 
   patronymicName:
     slot_uri: person:patronymicName
     title: patronymic name
     description: Name based on the given name of the Person's father.
-    range: string
+    range: LangString
     multivalued: true
 
   placeOfBirth:
@@ -313,7 +324,7 @@ slots:
     slot_uri: rdfs:label
     title: scheme name
     description: Name of the scheme used to construct the identifier.
-    range: string
+    range: LangString
     multivalued: true
 
   dateOfIssue:
@@ -343,14 +354,14 @@ slots:
     slot_uri: locn:thoroughfare
     title: thoroughfare
     description: The name of a passage or way through from one location to another.
-    range: string
+    range: LangString
     multivalued: true
 
   administrativeUnitLevel1:
     slot_uri: locn:adminUnitL1
     title: administrative unit level 1
     description: The name of the uppermost level of the address, almost always a country.
-    range: string
+    range: LangString
     multivalued: true
 
   administrativeUnitLevel2:
@@ -360,14 +371,14 @@ slots:
       The name of a secondary level/region of the address, usually a
       county, state or other such area that typically encompasses
       several localities.
-    range: string
+    range: LangString
     multivalued: true
 
   addressArea:
     slot_uri: locn:addressArea
     title: address area
     description: The name of a geographic area that groups Addresses.
-    range: string
+    range: LangString
     multivalued: true
 
   postName:
@@ -376,7 +387,7 @@ slots:
     description: >-
       A name created and maintained for postal purposes to identify a
       subdivision of addresses and postal delivery points.
-    range: string
+    range: LangString
     multivalued: true
 
   locatorName:
@@ -387,14 +398,14 @@ slots:
       the locator. The locator name could be the name of the property
       or complex, of the building or part of the building, or it could
       be the name of a room inside a building.
-    range: string
+    range: LangString
     multivalued: true
 
   fullAddress:
     slot_uri: locn:fullAddress
     title: full address
     description: The complete address written as a string.
-    range: string
+    range: LangString
     multivalued: true
 
   # ------- ContactPoint slots -------
@@ -426,7 +437,7 @@ slots:
     slot_uri: dcterms:title
     title: name
     description: The noun given to the Agent.
-    range: string
+    range: LangString
     multivalued: true
 
   agentType:
@@ -449,7 +460,7 @@ slots:
     slot_uri: rdfs:label
     title: name
     description: A string of characters that represents a Jurisdiction.
-    range: string
+    range: LangString
     multivalued: true
 
   # ------- Location slots -------
@@ -458,7 +469,7 @@ slots:
     slot_uri: locn:geographicName
     title: geographic name
     description: A textual description for a Location.
-    range: string
+    range: LangString
     multivalued: true
 
   geographicIdentifier:

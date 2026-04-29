@@ -52,6 +52,8 @@ generator_args:
     mergeimports: true
   shacl:
     mergeimports: true
+    closed: false
+    suffix: Shape
   shex:
     mergeimports: true
   sqlddl:
