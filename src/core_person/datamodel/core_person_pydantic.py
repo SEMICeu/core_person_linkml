@@ -111,7 +111,27 @@ linkml_meta = LinkMLMeta({'default_prefix': 'cpv',
                               'from_schema': 'https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1',
                               'name': 'LangString',
                               'typeof': 'string',
-                              'uri': 'rdf:langString'}}} )
+                              'uri': 'rdf:langString'},
+               'gYear': {'base': 'str',
+                         'description': 'An XSD gregorian year (e.g. "1980"). '
+                                        'Represents a year value in the proleptic '
+                                        'Gregorian calendar without a month or '
+                                        'day. Backed by Python str because Python '
+                                        'has no native gYear type.',
+                         'from_schema': 'https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1',
+                         'name': 'gYear',
+                         'uri': 'xsd:gYear'},
+               'gYearMonth': {'base': 'str',
+                              'description': 'An XSD gregorian year-month (e.g. '
+                                             '"1980-09"). Represents a specific '
+                                             'month of a specific year in the '
+                                             'proleptic Gregorian calendar without '
+                                             'a day. Backed by Python str because '
+                                             'Python has no native gYearMonth '
+                                             'type.',
+                              'from_schema': 'https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1',
+                              'name': 'gYearMonth',
+                              'uri': 'xsd:gYearMonth'}}} )
 
 
 class Person(ConfiguredBaseModel):
@@ -128,11 +148,14 @@ class Person(ConfiguredBaseModel):
     contactPoint: Optional[list[ContactPoint]] = Field(default=None, title="contact point", description="""The main contact information of the resource.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person'], 'slot_uri': 'm8g:contactPoint'} })
     countryOfBirth: Optional[list[Location]] = Field(default=None, title="country of birth", description="""The country in which the Person was born.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person'], 'slot_uri': 'person:countryOfBirth'} })
     countryOfDeath: Optional[list[Location]] = Field(default=None, title="country of death", description="""The country in which the Person died.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person'], 'slot_uri': 'person:countryOfDeath'} })
-    dateOfBirth: Optional[list[GenericDate]] = Field(default=None, title="date of birth", description="""The point in time on which the Person was born.""", json_schema_extra = { "linkml_meta": {'comments': ['The date of birth could be expressed as date, gYearMonth or '
+    dateOfBirth: Optional[list[Union[date, str]]] = Field(default=None, title="date of birth", description="""The point in time on which the Person was born.""", json_schema_extra = { "linkml_meta": {'any_of': [{'range': 'date'}, {'range': 'gYear'}, {'range': 'gYearMonth'}],
+         'comments': ['The date of birth could be expressed as date, gYearMonth or '
                       'gYear, e.g. 1980-09-16, 1980-09, 1980.'],
          'domain_of': ['Person'],
          'slot_uri': 'm8g:birthDate'} })
-    dateOfDeath: Optional[list[GenericDate]] = Field(default=None, title="date of death", description="""The point in time on which the Person died.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person'], 'slot_uri': 'm8g:deathDate'} })
+    dateOfDeath: Optional[list[Union[date, str]]] = Field(default=None, title="date of death", description="""The point in time on which the Person died.""", json_schema_extra = { "linkml_meta": {'any_of': [{'range': 'date'}, {'range': 'gYear'}, {'range': 'gYearMonth'}],
+         'domain_of': ['Person'],
+         'slot_uri': 'm8g:deathDate'} })
     domicile: Optional[list[Address]] = Field(default=None, title="domicile", description="""The place that the Person treats as permanent home.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person'], 'slot_uri': 'm8g:domicile'} })
     familyName: Optional[list[str]] = Field(default=None, title="family name", description="""The hereditary surname of a family.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person'], 'slot_uri': 'foaf:familyName'} })
     fullName: Optional[list[str]] = Field(default=None, title="full name", description="""The complete name of the Person as one string.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person'], 'slot_uri': 'foaf:name'} })
@@ -241,16 +264,6 @@ class Concept(ConfiguredBaseModel):
     pass
 
 
-class GenericDate(ConfiguredBaseModel):
-    """
-    The generic date data type is the union of xsd:date, xsd:gYearMonth and xsd:gYear.
-    """
-    linkml_meta: ClassVar[LinkMLMeta] = LinkMLMeta({'class_uri': 'm8g:GenericDate',
-         'from_schema': 'https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1'})
-
-    pass
-
-
 # Model rebuild
 # see https://pydantic-docs.helpmanual.io/usage/models/#rebuilding-a-model
 Person.model_rebuild()
@@ -262,4 +275,3 @@ Jurisdiction.model_rebuild()
 Location.model_rebuild()
 Document.model_rebuild()
 Concept.model_rebuild()
-GenericDate.model_rebuild()

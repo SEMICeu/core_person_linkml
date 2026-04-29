@@ -43,6 +43,25 @@ types:
     description: A natural-language string with an optional language tag.
     base: str
 
+  gYear:
+    name: gYear
+    uri: xsd:gYear
+    base: str
+    description: >-
+      An XSD gregorian year (e.g. "1980"). Represents a year value
+      in the proleptic Gregorian calendar without a month or day.
+      Backed by Python str because Python has no native gYear type.
+
+  gYearMonth:
+    name: gYearMonth
+    uri: xsd:gYearMonth
+    base: str
+    description: >-
+      An XSD gregorian year-month (e.g. "1980-09"). Represents a
+      specific month of a specific year in the proleptic Gregorian
+      calendar without a day. Backed by Python str because Python has
+      no native gYearMonth type.
+
 # --------------------------------------------------------------------
 # Classes
 # --------------------------------------------------------------------
@@ -150,12 +169,6 @@ classes:
       A SKOS concept, used for controlled vocabularies (e.g. for sex,
       gender).
 
-  GenericDate:
-    class_uri: m8g:GenericDate
-    description: >-
-      The generic date data type is the union of xsd:date,
-      xsd:gYearMonth and xsd:gYear.
-
 # --------------------------------------------------------------------
 # Slots
 # --------------------------------------------------------------------
@@ -220,8 +233,11 @@ slots:
     slot_uri: m8g:birthDate
     title: date of birth
     description: The point in time on which the Person was born.
-    range: GenericDate
     multivalued: true
+    any_of:
+      - range: date
+      - range: gYear
+      - range: gYearMonth
     comments:
       - >-
         The date of birth could be expressed as date, gYearMonth or
@@ -231,8 +247,11 @@ slots:
     slot_uri: m8g:deathDate
     title: date of death
     description: The point in time on which the Person died.
-    range: GenericDate
     multivalued: true
+    any_of:
+      - range: date
+      - range: gYear
+      - range: gYearMonth
 
   domicile:
     slot_uri: m8g:domicile

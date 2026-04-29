@@ -9,21 +9,23 @@ SEMIC artefacts in `originals/`.
 
 | metric                              | original                | linkml output           |
 |-------------------------------------|-------------------------|-------------------------|
-| SHACL `sh:NodeShape` count          | 14                      | 10                      |
+| SHACL `sh:NodeShape` count          | 14                      | 9                       |
 | SHACL `sh:property` count           | 36                      | 36                      |
-| OWL `owl:Class` declarations        | 2 (m8g:ContactPoint, m8g:GenericDate) | 10 (one per LinkML class, with `skos:exactMatch` to original) |
+| OWL `owl:Class` declarations        | 2 (m8g:ContactPoint, m8g:GenericDate) | 9 (one per LinkML class, with `skos:exactMatch` to original; `GenericDate` removed in favour of slot-level `any_of`) |
 | OWL `owl:DatatypeProperty`          | 5                       | 24                      |
 | OWL `owl:ObjectProperty`            | 3                       | 17                      |
-| classes captured                    | Person, Identifier, Address, ContactPoint, Agent, Jurisdiction, Location, Document, Concept (Code), GenericDate | all 10 |
+| classes captured                    | Person, Identifier, Address, ContactPoint, Agent, Jurisdiction, Location, Document, Concept (Code), GenericDate | 9 (GenericDate replaced by slot-level `any_of` of xsd:date / xsd:gYear / xsd:gYearMonth) |
 | total Person properties (SHACL)     | 18                      | 18                      |
 
 ## SHACL: what matches
 
-- All 10 entity-class shapes round-trip with the **same target IRI**:
+- 9 entity-class shapes round-trip with the **same target IRI**:
   `person:Person`, `adms:Identifier`, `locn:Address`,
   `m8g:ContactPoint`, `foaf:Agent`, `dcterms:Jurisdiction`,
-  `dcterms:Location`, `foaf:Document`, `skos:Concept`,
-  `m8g:GenericDate`.
+  `dcterms:Location`, `foaf:Document`, `skos:Concept`. The original
+  `m8g:GenericDate` NodeShape is intentionally not produced — it is
+  replaced by an inline `sh:or` constraint on the date slots (see the
+  Union datatypes section below).
 - All 36 `sh:property` paths match the originals exactly:
   `foaf:familyName`, `foaf:givenName`, `foaf:name`, `dcterms:identifier`,
   `dcterms:alternative`, `dcterms:conformsTo`, `dcterms:issued`,
@@ -121,10 +123,47 @@ SEMIC artefacts in `originals/`.
 2. **Cannot model SHACL targets that point at datatype IRIs**
    (Date/Literal/Text/URI shapes in the original). LinkML treats
    datatypes as a closed registry separate from classes.
-3. **No first-class union datatypes.** `m8g:GenericDate` is the union
-   of `xsd:date`, `xsd:gYearMonth`, `xsd:gYear`. LinkML needs a
-   user-defined type that erases the union; the union semantics are
-   lost.
+3. **Union datatypes — works in SHACL/OWL, degrades elsewhere.**
+   This was tested directly. The slots `dateOfBirth` / `dateOfDeath`
+   were modelled with:
+   ```yaml
+   any_of:
+     - range: date
+     - range: gYear
+     - range: gYearMonth
+   ```
+   Result by generator:
+   - **SHACL** (`gen-shacl`): correct. Each date slot emits an
+     `sh:or` with three branches, and each branch carries the right
+     `sh:datatype`: `xsd:date`, `xsd:gYear`, `xsd:gYearMonth`. This
+     is a *better* approximation than the original SEMIC SHACL,
+     which only declared `m8g:GenericDate` as an empty `NodeShape`
+     and did not actually constrain the date properties at all.
+   - **OWL** (`gen-owl`): correct. `rdfs:range` is emitted as
+     `[ a rdfs:Datatype ; owl:unionOf ( xsd:date xsd:gYear xsd:gYearMonth ) ]`,
+     and the same blank-node datatype union is used inside the
+     `owl:Restriction` axioms on the Person class.
+   - **JSON Schema** (`gen-json-schema`): partial. `anyOf` is
+     emitted with three branches, but only the `date` branch keeps
+     `format: date` — the gYear and gYearMonth branches collapse to
+     `{"type": "string"}` with no pattern, since the custom types
+     have `base: str` and no `pattern` slot.
+   - **Pydantic** (`gen-pydantic`): degraded. The slot type becomes
+     `Optional[list[Union[date, str]]]` — three custom types
+     collapse to two Python types because gYear and gYearMonth share
+     the same `base: str`. The `any_of` metadata is preserved in
+     `json_schema_extra`, so callers that read the metadata can
+     still see the intended union, but Python static checking
+     cannot distinguish gYear from gYearMonth from any other str.
+   - **dataclasses** (`pythongen`): worst. The slot range becomes
+     `Optional[Union[str, list[str]]]` — `xsd:date` is silently
+     dropped from the union and the field accepts any string. The
+     `any_of` semantics are lost entirely.
+
+   Summary: `any_of` is round-trippable in the RDF generators
+   (SHACL, OWL) but lossy in the code generators because Python's
+   type system cannot distinguish multiple custom types that share
+   a `base`.
 4. **No per-property `rdfs:isDefinedBy` / scope notes / spec anchors.**
    The original SHACL/OWL treat each property as a documented spec
    element with an HTML anchor — LinkML descriptions don't carry this.
@@ -132,6 +171,50 @@ SEMIC artefacts in `originals/`.
    always declares `cpv:Foo` even when the intent is "I am only
    describing the existing `foaf:Agent` shape". This means the OWL
    output is roughly 4x the size of the original (615 vs 143 lines).
+
+### Custom datatypes (`xsd:gYear`, `xsd:gYearMonth`)
+
+Neither `xsd:gYear` nor `xsd:gYearMonth` is in LinkML's built-in
+type registry (the built-in `date` covers `xsd:date`, but there is
+no `gYear` / `gYearMonth`). To use them in `any_of`, both types had
+to be declared in the schema's `types:` section:
+
+```yaml
+types:
+  gYear:
+    name: gYear
+    uri: xsd:gYear
+    base: str
+    description: An XSD gregorian year (e.g. "1980") …
+  gYearMonth:
+    name: gYearMonth
+    uri: xsd:gYearMonth
+    base: str
+    description: An XSD gregorian year-month (e.g. "1980-09") …
+```
+
+How that played out per generator:
+
+- **SHACL**: the `uri:` is honoured. `sh:datatype xsd:gYear` and
+  `sh:datatype xsd:gYearMonth` are emitted with the canonical XSD
+  IRIs.
+- **OWL**: `xsd:gYear` and `xsd:gYearMonth` are declared as
+  `rdfs:Datatype` in the output and used directly in the
+  `owl:unionOf` list. Correct.
+- **JSON Schema**: only `base: str` survives — the `uri:` field is
+  not consulted, so both types render as plain
+  `{"type": "string"}`. There is no XSD-style hint left.
+- **Pydantic / dataclasses**: same problem. Because there is no
+  Python type for `gYear` / `gYearMonth`, both collapse to `str`,
+  losing distinctness from each other and from any other `str`.
+
+Note: a richer encoding would be to also add a `pattern:` (e.g.
+`^\d{4}$` for gYear, `^\d{4}-\d{2}$` for gYearMonth). That would
+be carried through into JSON Schema and Pydantic as a regex
+constraint and would partially recover the distinction. We did
+not add patterns here because the SEMIC original does not
+constrain the literal lexical form either; following the spec's
+laxer semantics is the right approximation.
 
 ## Files
 

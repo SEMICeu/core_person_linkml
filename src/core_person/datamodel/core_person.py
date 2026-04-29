@@ -1,5 +1,5 @@
 # Auto generated from core_person.yaml by pythongen.py version: 0.0.1
-# Generation date: 2026-04-29T10:04:38
+# Generation date: 2026-04-29T14:50:12
 # Schema: core_person
 #
 # id: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
@@ -80,6 +80,22 @@ DEFAULT_ = CPV
 
 
 # Types
+class GYear(str):
+    """ An XSD gregorian year (e.g. "1980"). Represents a year value in the proleptic Gregorian calendar without a month or day. Backed by Python str because Python has no native gYear type. """
+    type_class_uri = XSD["gYear"]
+    type_class_curie = "xsd:gYear"
+    type_name = "gYear"
+    type_model_uri = CPV.GYear
+
+
+class GYearMonth(str):
+    """ An XSD gregorian year-month (e.g. "1980-09"). Represents a specific month of a specific year in the proleptic Gregorian calendar without a day. Backed by Python str because Python has no native gYearMonth type. """
+    type_class_uri = XSD["gYearMonth"]
+    type_class_curie = "xsd:gYearMonth"
+    type_name = "gYearMonth"
+    type_model_uri = CPV.GYearMonth
+
+
 class LangString(String):
     """ A natural-language string with an optional language tag. """
     type_class_uri = RDF["langString"]
@@ -111,8 +127,8 @@ class Person(YAMLRoot):
     contactPoint: Optional[Union[Union[dict, "ContactPoint"], list[Union[dict, "ContactPoint"]]]] = empty_list()
     countryOfBirth: Optional[Union[Union[dict, "Location"], list[Union[dict, "Location"]]]] = empty_list()
     countryOfDeath: Optional[Union[Union[dict, "Location"], list[Union[dict, "Location"]]]] = empty_list()
-    dateOfBirth: Optional[Union[Union[dict, "GenericDate"], list[Union[dict, "GenericDate"]]]] = empty_list()
-    dateOfDeath: Optional[Union[Union[dict, "GenericDate"], list[Union[dict, "GenericDate"]]]] = empty_list()
+    dateOfBirth: Optional[Union[str, list[str]]] = empty_list()
+    dateOfDeath: Optional[Union[str, list[str]]] = empty_list()
     domicile: Optional[Union[Union[dict, "Address"], list[Union[dict, "Address"]]]] = empty_list()
     familyName: Optional[Union[Union[str, LangString], list[Union[str, LangString]]]] = empty_list()
     fullName: Optional[Union[Union[str, LangString], list[Union[str, LangString]]]] = empty_list()
@@ -156,11 +172,11 @@ class Person(YAMLRoot):
 
         if not isinstance(self.dateOfBirth, list):
             self.dateOfBirth = [self.dateOfBirth] if self.dateOfBirth is not None else []
-        self.dateOfBirth = [v if isinstance(v, GenericDate) else GenericDate(**as_dict(v)) for v in self.dateOfBirth]
+        self.dateOfBirth = [v if isinstance(v, str) else str(v) for v in self.dateOfBirth]
 
         if not isinstance(self.dateOfDeath, list):
             self.dateOfDeath = [self.dateOfDeath] if self.dateOfDeath is not None else []
-        self.dateOfDeath = [v if isinstance(v, GenericDate) else GenericDate(**as_dict(v)) for v in self.dateOfDeath]
+        self.dateOfDeath = [v if isinstance(v, str) else str(v) for v in self.dateOfDeath]
 
         if not isinstance(self.domicile, list):
             self.domicile = [self.domicile] if self.domicile is not None else []
@@ -442,18 +458,6 @@ class Concept(YAMLRoot):
     class_model_uri: ClassVar[URIRef] = CPV.Concept
 
 
-class GenericDate(YAMLRoot):
-    """
-    The generic date data type is the union of xsd:date, xsd:gYearMonth and xsd:gYear.
-    """
-    _inherited_slots: ClassVar[list[str]] = []
-
-    class_class_uri: ClassVar[URIRef] = M8G["GenericDate"]
-    class_class_curie: ClassVar[str] = "m8g:GenericDate"
-    class_name: ClassVar[str] = "GenericDate"
-    class_model_uri: ClassVar[URIRef] = CPV.GenericDate
-
-
 # Enumerations
 
 
@@ -483,10 +487,10 @@ slots.countryOfDeath = Slot(uri=PERSON.countryOfDeath, name="countryOfDeath", cu
                    model_uri=CPV.countryOfDeath, domain=None, range=Optional[Union[Union[dict, Location], list[Union[dict, Location]]]])
 
 slots.dateOfBirth = Slot(uri=M8G.birthDate, name="dateOfBirth", curie=M8G.curie('birthDate'),
-                   model_uri=CPV.dateOfBirth, domain=None, range=Optional[Union[Union[dict, GenericDate], list[Union[dict, GenericDate]]]])
+                   model_uri=CPV.dateOfBirth, domain=None, range=Optional[Union[str, list[str]]])
 
 slots.dateOfDeath = Slot(uri=M8G.deathDate, name="dateOfDeath", curie=M8G.curie('deathDate'),
-                   model_uri=CPV.dateOfDeath, domain=None, range=Optional[Union[Union[dict, GenericDate], list[Union[dict, GenericDate]]]])
+                   model_uri=CPV.dateOfDeath, domain=None, range=Optional[Union[str, list[str]]])
 
 slots.domicile = Slot(uri=M8G.domicile, name="domicile", curie=M8G.curie('domicile'),
                    model_uri=CPV.domicile, domain=None, range=Optional[Union[Union[dict, Address], list[Union[dict, Address]]]])
