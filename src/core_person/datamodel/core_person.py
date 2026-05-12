@@ -1,5 +1,5 @@
 # Auto generated from core_person.yaml by pythongen.py version: 0.0.1
-# Generation date: 2026-04-29T14:50:12
+# Generation date: 2026-05-12T14:45:51
 # Schema: core_person
 #
 # id: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
@@ -59,7 +59,7 @@ from rdflib import (
 from linkml_runtime.linkml_model.types import Date, String, Uri
 from linkml_runtime.utils.metamodelcore import URI, XSDDate
 
-metamodel_version = "1.7.0"
+metamodel_version = "1.11.0"
 version = "2.1.1"
 
 # Namespaces

@@ -1,0 +1,1105 @@
+name: core_person
+description: LinkML approximation of the SEMIC Core Person Vocabulary 2.1.1. The Core
+  Person Vocabulary captures the fundamental characteristics of a person, e.g. name,
+  gender, date of birth, etc. It is the ontological backbone for several Core Vocabularies
+  and Application Profiles published by SEMIC.
+title: Core Person Vocabulary
+id: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+version: 2.1.1
+imports:
+- linkml:types
+license: https://creativecommons.org/licenses/by/4.0/
+prefixes:
+  linkml:
+    prefix_prefix: linkml
+    prefix_reference: https://w3id.org/linkml/
+  cpv:
+    prefix_prefix: cpv
+    prefix_reference: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/
+  m8g:
+    prefix_prefix: m8g
+    prefix_reference: http://data.europa.eu/m8g/
+  person:
+    prefix_prefix: person
+    prefix_reference: http://www.w3.org/ns/person#
+  foaf:
+    prefix_prefix: foaf
+    prefix_reference: http://xmlns.com/foaf/0.1/
+  locn:
+    prefix_prefix: locn
+    prefix_reference: http://www.w3.org/ns/locn#
+  adms:
+    prefix_prefix: adms
+    prefix_reference: http://www.w3.org/ns/adms#
+  dcterms:
+    prefix_prefix: dcterms
+    prefix_reference: http://purl.org/dc/terms/
+  skos:
+    prefix_prefix: skos
+    prefix_reference: http://www.w3.org/2004/02/skos/core#
+  rdfs:
+    prefix_prefix: rdfs
+    prefix_reference: http://www.w3.org/2000/01/rdf-schema#
+  rdf:
+    prefix_prefix: rdf
+    prefix_reference: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+  xsd:
+    prefix_prefix: xsd
+    prefix_reference: http://www.w3.org/2001/XMLSchema#
+  owl:
+    prefix_prefix: owl
+    prefix_reference: http://www.w3.org/2002/07/owl#
+default_prefix: cpv
+default_range: string
+types:
+  LangString:
+    name: LangString
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/LangString
+    description: A natural-language string with an optional language tag.
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    typeof: string
+    base: str
+    uri: rdf:langString
+  gYear:
+    name: gYear
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/GYear
+    description: An XSD gregorian year (e.g. "1980"). Represents a year value in the
+      proleptic Gregorian calendar without a month or day. Backed by Python str because
+      Python has no native gYear type.
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    base: str
+    uri: xsd:gYear
+  gYearMonth:
+    name: gYearMonth
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/GYearMonth
+    description: An XSD gregorian year-month (e.g. "1980-09"). Represents a specific
+      month of a specific year in the proleptic Gregorian calendar without a day.
+      Backed by Python str because Python has no native gYearMonth type.
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    base: str
+    uri: xsd:gYearMonth
+  string:
+    name: string
+    definition_uri: https://w3id.org/linkml/String
+    description: A character string
+    notes:
+    - In RDF serializations, a slot with range of string is treated as a literal or
+      type xsd:string. If you are authoring schemas in LinkML YAML, the type is referenced
+      with the lower case "string".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Text
+    base: str
+    uri: xsd:string
+  integer:
+    name: integer
+    definition_uri: https://w3id.org/linkml/Integer
+    description: An integer
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "integer".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Integer
+    base: int
+    uri: xsd:integer
+  boolean:
+    name: boolean
+    definition_uri: https://w3id.org/linkml/Boolean
+    description: A binary (true or false) value
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "boolean".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Boolean
+    base: Bool
+    uri: xsd:boolean
+    repr: bool
+  float:
+    name: float
+    definition_uri: https://w3id.org/linkml/Float
+    description: A real number that conforms to the xsd:float specification
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "float".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Float
+    base: float
+    uri: xsd:float
+  double:
+    name: double
+    definition_uri: https://w3id.org/linkml/Double
+    description: A real number that conforms to the xsd:double specification
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "double".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    close_mappings:
+    - schema:Float
+    base: float
+    uri: xsd:double
+  decimal:
+    name: decimal
+    definition_uri: https://w3id.org/linkml/Decimal
+    description: A real number with arbitrary precision that conforms to the xsd:decimal
+      specification
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "decimal".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    broad_mappings:
+    - schema:Number
+    base: Decimal
+    uri: xsd:decimal
+  time:
+    name: time
+    definition_uri: https://w3id.org/linkml/Time
+    description: A time object represents a (local) time of day, independent of any
+      particular day
+    notes:
+    - URI is dateTime because OWL reasoners do not work with straight date or time
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "time".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Time
+    base: XSDTime
+    uri: xsd:time
+    repr: str
+  date:
+    name: date
+    definition_uri: https://w3id.org/linkml/Date
+    description: a date (year, month and day) in an idealized calendar
+    notes:
+    - URI is dateTime because OWL reasoners don't work with straight date or time
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "date".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:Date
+    base: XSDDate
+    uri: xsd:date
+    repr: str
+  datetime:
+    name: datetime
+    definition_uri: https://w3id.org/linkml/Datetime
+    description: The combination of a date and time
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "datetime".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    exact_mappings:
+    - schema:DateTime
+    base: XSDDateTime
+    uri: xsd:dateTime
+    repr: str
+  date_or_datetime:
+    name: date_or_datetime
+    definition_uri: https://w3id.org/linkml/DateOrDatetime
+    description: Either a date or a datetime
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "date_or_datetime".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: str
+    uri: linkml:DateOrDatetime
+    repr: str
+  uriorcurie:
+    name: uriorcurie
+    definition_uri: https://w3id.org/linkml/Uriorcurie
+    description: a URI or a CURIE
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "uriorcurie".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: URIorCURIE
+    uri: xsd:anyURI
+    repr: str
+  curie:
+    name: curie
+    definition_uri: https://w3id.org/linkml/Curie
+    conforms_to: https://www.w3.org/TR/curie/
+    description: a compact URI
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "curie".
+    comments:
+    - in RDF serializations this MUST be expanded to a URI
+    - in non-RDF serializations MAY be serialized as the compact representation
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: Curie
+    uri: xsd:string
+    repr: str
+  uri:
+    name: uri
+    definition_uri: https://w3id.org/linkml/Uri
+    conforms_to: https://www.ietf.org/rfc/rfc3987.txt
+    description: a complete URI
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "uri".
+    comments:
+    - in RDF serializations a slot with range of uri is treated as a literal or type
+      xsd:anyURI unless it is an identifier or a reference to an identifier, in which
+      case it is translated directly to a node
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    close_mappings:
+    - schema:URL
+    base: URI
+    uri: xsd:anyURI
+    repr: str
+  ncname:
+    name: ncname
+    definition_uri: https://w3id.org/linkml/Ncname
+    description: Prefix part of CURIE
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "ncname".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: NCName
+    uri: xsd:string
+    repr: str
+  objectidentifier:
+    name: objectidentifier
+    definition_uri: https://w3id.org/linkml/Objectidentifier
+    description: A URI or CURIE that represents an object in the model.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "objectidentifier".
+    comments:
+    - Used for inheritance and type checking
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: ElementIdentifier
+    uri: shex:iri
+    repr: str
+  nodeidentifier:
+    name: nodeidentifier
+    definition_uri: https://w3id.org/linkml/Nodeidentifier
+    description: A URI, CURIE or BNODE that represents a node in a model.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "nodeidentifier".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: NodeIdentifier
+    uri: shex:nonLiteral
+    repr: str
+  jsonpointer:
+    name: jsonpointer
+    definition_uri: https://w3id.org/linkml/Jsonpointer
+    conforms_to: https://datatracker.ietf.org/doc/html/rfc6901
+    description: A string encoding a JSON Pointer. The value of the string MUST conform
+      to JSON Point syntax and SHOULD dereference to a valid object within the current
+      instance document when encoded in tree form.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "jsonpointer".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: str
+    uri: xsd:string
+    repr: str
+  jsonpath:
+    name: jsonpath
+    definition_uri: https://w3id.org/linkml/Jsonpath
+    conforms_to: https://www.ietf.org/archive/id/draft-goessner-dispatch-jsonpath-00.html
+    description: A string encoding a JSON Path. The value of the string MUST conform
+      to JSON Point syntax and SHOULD dereference to zero or more valid objects within
+      the current instance document when encoded in tree form.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "jsonpath".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: str
+    uri: xsd:string
+    repr: str
+  sparqlpath:
+    name: sparqlpath
+    definition_uri: https://w3id.org/linkml/Sparqlpath
+    conforms_to: https://www.w3.org/TR/sparql11-query/#propertypaths
+    description: A string encoding a SPARQL Property Path. The value of the string
+      MUST conform to SPARQL syntax and SHOULD dereference to zero or more valid objects
+      within the current instance document when encoded as RDF.
+    notes:
+    - If you are authoring schemas in LinkML YAML, the type is referenced with the
+      lower case "sparqlpath".
+    from_schema: https://w3id.org/linkml/types
+    imported_from: linkml:types
+    base: str
+    uri: xsd:string
+    repr: str
+slots:
+  identifier:
+    name: identifier
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/identifier
+    description: The unambiguous structured reference to the Person.
+    title: identifier
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - dcterms:identifier
+    slot_uri: dcterms:identifier
+    owner: Person
+    domain_of:
+    - Person
+    range: Identifier
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  alternativeName:
+    name: alternativeName
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/alternativeName
+    description: Any name by which a Person is known, other than their full name.
+    title: alternative name
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - dcterms:alternative
+    slot_uri: dcterms:alternative
+    owner: Person
+    domain_of:
+    - Person
+    range: LangString
+    multivalued: true
+  birthName:
+    name: birthName
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/birthName
+    description: Full name of the Person given upon their birth.
+    title: birth name
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - person:birthName
+    slot_uri: person:birthName
+    owner: Person
+    domain_of:
+    - Person
+    range: LangString
+    multivalued: true
+  citizenship:
+    name: citizenship
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/citizenship
+    description: The Jurisdiction that has conferred citizenship rights on the Person
+      such as the right to vote, to receive certain protection from the community
+      or the issuance of a passport.
+    title: citizenship
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - person:citizenship
+    slot_uri: person:citizenship
+    owner: Person
+    domain_of:
+    - Person
+    range: Jurisdiction
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  contactPoint:
+    name: contactPoint
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/contactPoint
+    description: The main contact information of the resource.
+    title: contact point
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - m8g:contactPoint
+    slot_uri: m8g:contactPoint
+    owner: Person
+    domain_of:
+    - Person
+    range: ContactPoint
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  countryOfBirth:
+    name: countryOfBirth
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/countryOfBirth
+    description: The country in which the Person was born.
+    title: country of birth
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - person:countryOfBirth
+    slot_uri: person:countryOfBirth
+    owner: Person
+    domain_of:
+    - Person
+    range: Location
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  countryOfDeath:
+    name: countryOfDeath
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/countryOfDeath
+    description: The country in which the Person died.
+    title: country of death
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - person:countryOfDeath
+    slot_uri: person:countryOfDeath
+    owner: Person
+    domain_of:
+    - Person
+    range: Location
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  dateOfBirth:
+    name: dateOfBirth
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/dateOfBirth
+    description: The point in time on which the Person was born.
+    title: date of birth
+    comments:
+    - The date of birth could be expressed as date, gYearMonth or gYear, e.g. 1980-09-16,
+      1980-09, 1980.
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - m8g:birthDate
+    slot_uri: m8g:birthDate
+    owner: Person
+    domain_of:
+    - Person
+    range: string
+    multivalued: true
+    any_of:
+    - range: date
+    - range: gYear
+    - range: gYearMonth
+  dateOfDeath:
+    name: dateOfDeath
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/dateOfDeath
+    description: The point in time on which the Person died.
+    title: date of death
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - m8g:deathDate
+    slot_uri: m8g:deathDate
+    owner: Person
+    domain_of:
+    - Person
+    range: string
+    multivalued: true
+    any_of:
+    - range: date
+    - range: gYear
+    - range: gYearMonth
+  domicile:
+    name: domicile
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/domicile
+    description: The place that the Person treats as permanent home.
+    title: domicile
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - m8g:domicile
+    slot_uri: m8g:domicile
+    owner: Person
+    domain_of:
+    - Person
+    range: Address
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  familyName:
+    name: familyName
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/familyName
+    description: The hereditary surname of a family.
+    title: family name
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - foaf:familyName
+    slot_uri: foaf:familyName
+    owner: Person
+    domain_of:
+    - Person
+    range: LangString
+    multivalued: true
+  fullName:
+    name: fullName
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/fullName
+    description: The complete name of the Person as one string.
+    title: full name
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - foaf:name
+    slot_uri: foaf:name
+    owner: Person
+    domain_of:
+    - Person
+    range: LangString
+    multivalued: true
+  gender:
+    name: gender
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/gender
+    description: The identities, expressions and societal roles of the Person.
+    title: gender
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - m8g:gender
+    slot_uri: m8g:gender
+    owner: Person
+    domain_of:
+    - Person
+    range: Concept
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  givenName:
+    name: givenName
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/givenName
+    description: The name(s) that identify the Person within a family with a common
+      surname.
+    title: given name
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - foaf:givenName
+    slot_uri: foaf:givenName
+    owner: Person
+    domain_of:
+    - Person
+    range: LangString
+    multivalued: true
+  matronymicName:
+    name: matronymicName
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/matronymicName
+    description: Name based on the given name of the Person's mother.
+    title: matronymic name
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - m8g:matronymicName
+    slot_uri: m8g:matronymicName
+    owner: Person
+    domain_of:
+    - Person
+    range: LangString
+    multivalued: true
+  patronymicName:
+    name: patronymicName
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/patronymicName
+    description: Name based on the given name of the Person's father.
+    title: patronymic name
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - person:patronymicName
+    slot_uri: person:patronymicName
+    owner: Person
+    domain_of:
+    - Person
+    range: LangString
+    multivalued: true
+  placeOfBirth:
+    name: placeOfBirth
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/placeOfBirth
+    description: The Location where the Person was born.
+    title: place of birth
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - person:placeOfBirth
+    slot_uri: person:placeOfBirth
+    owner: Person
+    domain_of:
+    - Person
+    range: Location
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  placeOfDeath:
+    name: placeOfDeath
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/placeOfDeath
+    description: The Location where the Person died.
+    title: place of death
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - person:placeOfDeath
+    slot_uri: person:placeOfDeath
+    owner: Person
+    domain_of:
+    - Person
+    range: Location
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  residency:
+    name: residency
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/residency
+    description: Jurisdiction where the Person has their dwelling.
+    title: residency
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - person:residency
+    slot_uri: person:residency
+    owner: Person
+    domain_of:
+    - Person
+    range: Jurisdiction
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  sex:
+    name: sex
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/sex
+    description: The organism's biological sex.
+    title: sex
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - m8g:sex
+    slot_uri: m8g:sex
+    owner: Person
+    domain_of:
+    - Person
+    range: Concept
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  schemeUri:
+    name: schemeUri
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/schemeUri
+    description: URI of the scheme used to construct the identifier.
+    title: scheme URI
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - dcterms:conformsTo
+    slot_uri: dcterms:conformsTo
+    owner: Identifier
+    domain_of:
+    - Identifier
+    range: uri
+    multivalued: true
+  schemeName:
+    name: schemeName
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/schemeName
+    description: Name of the scheme used to construct the identifier.
+    title: scheme name
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - rdfs:label
+    slot_uri: rdfs:label
+    owner: Identifier
+    domain_of:
+    - Identifier
+    range: LangString
+    multivalued: true
+  dateOfIssue:
+    name: dateOfIssue
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/dateOfIssue
+    description: The date on which the Identifier was assigned.
+    title: date of issue
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - dcterms:issued
+    slot_uri: dcterms:issued
+    owner: Identifier
+    domain_of:
+    - Identifier
+    range: date
+    multivalued: true
+  identifies:
+    name: identifies
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/identifies
+    description: The entity that is referenced by the Identifier.
+    title: identifies
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - m8g:identifies
+    slot_uri: m8g:identifies
+    owner: Identifier
+    domain_of:
+    - Identifier
+    range: Person
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  issuingAuthorityUri:
+    name: issuingAuthorityUri
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/issuingAuthorityUri
+    description: The reference in the form of a Uniform Resource Identifier to the
+      issuing authority.
+    title: issuing authority URI
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - dcterms:creator
+    slot_uri: dcterms:creator
+    owner: Identifier
+    domain_of:
+    - Identifier
+    range: Agent
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  thoroughfare:
+    name: thoroughfare
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/thoroughfare
+    description: The name of a passage or way through from one location to another.
+    title: thoroughfare
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - locn:thoroughfare
+    slot_uri: locn:thoroughfare
+    owner: Address
+    domain_of:
+    - Address
+    range: LangString
+    multivalued: true
+  administrativeUnitLevel1:
+    name: administrativeUnitLevel1
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/administrativeUnitLevel1
+    description: The name of the uppermost level of the address, almost always a country.
+    title: administrative unit level 1
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - locn:adminUnitL1
+    slot_uri: locn:adminUnitL1
+    owner: Address
+    domain_of:
+    - Address
+    range: LangString
+    multivalued: true
+  administrativeUnitLevel2:
+    name: administrativeUnitLevel2
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/administrativeUnitLevel2
+    description: The name of a secondary level/region of the address, usually a county,
+      state or other such area that typically encompasses several localities.
+    title: administrative unit level 2
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - locn:adminUnitL2
+    slot_uri: locn:adminUnitL2
+    owner: Address
+    domain_of:
+    - Address
+    range: LangString
+    multivalued: true
+  addressArea:
+    name: addressArea
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/addressArea
+    description: The name of a geographic area that groups Addresses.
+    title: address area
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - locn:addressArea
+    slot_uri: locn:addressArea
+    owner: Address
+    domain_of:
+    - Address
+    range: LangString
+    multivalued: true
+  postName:
+    name: postName
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/postName
+    description: A name created and maintained for postal purposes to identify a subdivision
+      of addresses and postal delivery points.
+    title: post name
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - locn:postName
+    slot_uri: locn:postName
+    owner: Address
+    domain_of:
+    - Address
+    range: LangString
+    multivalued: true
+  locatorName:
+    name: locatorName
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/locatorName
+    description: Proper noun(s) applied to the real world entity identified by the
+      locator. The locator name could be the name of the property or complex, of the
+      building or part of the building, or it could be the name of a room inside a
+      building.
+    title: locator name
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - locn:locatorName
+    slot_uri: locn:locatorName
+    owner: Address
+    domain_of:
+    - Address
+    range: LangString
+    multivalued: true
+  fullAddress:
+    name: fullAddress
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/fullAddress
+    description: The complete address written as a string.
+    title: full address
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - locn:fullAddress
+    slot_uri: locn:fullAddress
+    owner: Address
+    domain_of:
+    - Address
+    range: LangString
+    multivalued: true
+  contactPage:
+    name: contactPage
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/contactPage
+    description: A web page that could be used to reach out the Contact Point.
+    title: contact page
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - m8g:contactPage
+    slot_uri: m8g:contactPage
+    owner: ContactPoint
+    domain_of:
+    - ContactPoint
+    range: Document
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  hasEmail:
+    name: hasEmail
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/hasEmail
+    description: An electronic address through which the Contact Point can be contacted.
+    title: has email
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - m8g:email
+    slot_uri: m8g:email
+    owner: ContactPoint
+    domain_of:
+    - ContactPoint
+    range: string
+    multivalued: true
+  hasTelephone:
+    name: hasTelephone
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/hasTelephone
+    description: A telephone number through which the Contact Point can be contacted.
+    title: has telephone
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - m8g:telephone
+    slot_uri: m8g:telephone
+    owner: ContactPoint
+    domain_of:
+    - ContactPoint
+    range: string
+    multivalued: true
+  agentName:
+    name: agentName
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/agentName
+    description: The noun given to the Agent.
+    title: name
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - dcterms:title
+    slot_uri: dcterms:title
+    owner: Agent
+    domain_of:
+    - Agent
+    range: LangString
+    multivalued: true
+  agentType:
+    name: agentType
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/agentType
+    description: A classification assigned to an Agent.
+    title: type
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - dcterms:type
+    slot_uri: dcterms:type
+    owner: Agent
+    domain_of:
+    - Agent
+    range: Concept
+    multivalued: true
+    inlined: true
+    inlined_as_list: true
+  jurisdictionId:
+    name: jurisdictionId
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/jurisdictionId
+    description: A reference in the form of a Uniform Resource Identifier to the Jurisdiction.
+    title: id
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - dcterms:identifier
+    slot_uri: dcterms:identifier
+    owner: Jurisdiction
+    domain_of:
+    - Jurisdiction
+    range: uri
+    multivalued: true
+  jurisdictionName:
+    name: jurisdictionName
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/jurisdictionName
+    description: A string of characters that represents a Jurisdiction.
+    title: name
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - rdfs:label
+    slot_uri: rdfs:label
+    owner: Jurisdiction
+    domain_of:
+    - Jurisdiction
+    range: LangString
+    multivalued: true
+  geographicName:
+    name: geographicName
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/geographicName
+    description: A textual description for a Location.
+    title: geographic name
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - locn:geographicName
+    slot_uri: locn:geographicName
+    owner: Location
+    domain_of:
+    - Location
+    range: LangString
+    multivalued: true
+  geographicIdentifier:
+    name: geographicIdentifier
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/geographicIdentifier
+    description: A reference in the form of a Uniform Resource Identifier to the Location.
+    title: geographic identifier
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    mappings:
+    - rdfs:seeAlso
+    slot_uri: rdfs:seeAlso
+    owner: Location
+    domain_of:
+    - Location
+    range: uri
+    multivalued: true
+classes:
+  Person:
+    name: Person
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/Person
+    description: An individual human being who may be dead or alive, but not imaginary.
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    exact_mappings:
+    - person:Person
+    slots:
+    - identifier
+    - alternativeName
+    - birthName
+    - citizenship
+    - contactPoint
+    - countryOfBirth
+    - countryOfDeath
+    - dateOfBirth
+    - dateOfDeath
+    - domicile
+    - familyName
+    - fullName
+    - gender
+    - givenName
+    - matronymicName
+    - patronymicName
+    - placeOfBirth
+    - placeOfDeath
+    - residency
+    - sex
+    class_uri: person:Person
+  Identifier:
+    name: Identifier
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/Identifier
+    description: A character string used to uniquely identify one instance of an object
+      within an identification scheme.
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    exact_mappings:
+    - adms:Identifier
+    slots:
+    - schemeUri
+    - schemeName
+    - dateOfIssue
+    - identifies
+    - issuingAuthorityUri
+    class_uri: adms:Identifier
+  Address:
+    name: Address
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/Address
+    description: An "address representation" as conceptually defined by the INSPIRE
+      Address Representation data type.
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    exact_mappings:
+    - locn:Address
+    slots:
+    - thoroughfare
+    - administrativeUnitLevel1
+    - administrativeUnitLevel2
+    - addressArea
+    - postName
+    - locatorName
+    - fullAddress
+    class_uri: locn:Address
+  ContactPoint:
+    name: ContactPoint
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/ContactPoint
+    description: Information (e.g. e-mail address, telephone number) of a person or
+      department through which the user can get in touch with.
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    exact_mappings:
+    - m8g:ContactPoint
+    slots:
+    - contactPage
+    - hasEmail
+    - hasTelephone
+    class_uri: m8g:ContactPoint
+  Agent:
+    name: Agent
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/Agent
+    description: Any entity carrying out actions, typically a person or an organisation.
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    exact_mappings:
+    - foaf:Agent
+    slots:
+    - agentName
+    - agentType
+    class_uri: foaf:Agent
+  Jurisdiction:
+    name: Jurisdiction
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/Jurisdiction
+    description: "The legal authority \u2014 usually a public body \u2014 defined\
+      \ by a geographical extent within which it has the power to make legal decisions."
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    exact_mappings:
+    - dcterms:Jurisdiction
+    slots:
+    - jurisdictionId
+    - jurisdictionName
+    class_uri: dcterms:Jurisdiction
+  Location:
+    name: Location
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/Location
+    description: A region or named place. It can be described by a geographic name
+      or geographic identifier.
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    exact_mappings:
+    - dcterms:Location
+    slots:
+    - geographicName
+    - geographicIdentifier
+    class_uri: dcterms:Location
+  Document:
+    name: Document
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/Document
+    description: A document, e.g. a web page.
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    exact_mappings:
+    - foaf:Document
+    class_uri: foaf:Document
+  Concept:
+    name: Concept
+    definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/Concept
+    description: A SKOS concept, used for controlled vocabularies (e.g. for sex, gender).
+    from_schema: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
+    exact_mappings:
+    - skos:Concept
+    class_uri: skos:Concept
+metamodel_version: 1.11.0
+source_file: core_person.yaml
+source_file_date: '2026-04-29T14:49:59'
+source_file_size: 13358
+generation_date: '2026-05-12T14:46:08'
+

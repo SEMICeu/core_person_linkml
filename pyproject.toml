@@ -11,16 +11,16 @@ authors = [
 license = "MIT"
 license-files = ["LICENSE"]
 readme = "README.md"
-requires-python = ">=3.9,<4.0"
+requires-python = ">=3.10,<4.0"
 dynamic = ["version"]
 
 dependencies = [
-  "linkml-runtime >=1.9.4",
+  "linkml-runtime @ git+https://github.com/linkml/linkml.git@main#subdirectory=packages/linkml_runtime",
 ]
 
 [dependency-groups]
 dev = [
-    "linkml>=1.9.3",
+    "linkml @ git+https://github.com/linkml/linkml.git@main#subdirectory=packages/linkml",
     "mkdocs-material>=8.2.8",
     "mkdocs-mermaid2-plugin>=1.1.1",
     "mkdocs-pymdownx-material-extras>=2.5.6",
@@ -30,6 +30,12 @@ dev = [
 
 # See https://hatch.pypa.io/latest/config/build/#file-selection for how to
 # explicitly include files other than default into the build distributions.
+
+[tool.hatch.metadata]
+# Required because project.dependencies pins linkml-runtime to a git URL
+# (the project tracks linkml/linkml main by design — see
+# .claude/skills/align-model/SKILL.md).
+allow-direct-references = true
 
 [tool.hatch.version]
 source = "uv-dynamic-versioning"

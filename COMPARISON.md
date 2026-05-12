@@ -1,9 +1,18 @@
 # LinkML vs SEMIC Core Person Vocabulary 2.1.1 — comparison
 
+| Field | Value |
+|---|---|
+| Last refreshed | 2026-05-12 |
+| LinkML (generators) commit | `1c5f68e43a6960ec1066521f0d5bb112cebde21a` (1.11.0rc3.post8.dev0+1c5f68e4) |
+| linkml-runtime commit | `1c5f68e43a6960ec1066521f0d5bb112cebde21a` (1.11.0rc3.post8.dev0+1c5f68e4) |
+| Upstream release | SEMIC Core Person Vocabulary **2.1.1** |
+| Upstream sources | `original/releases/2.1.1/{shacl,context,voc,html}/` |
+
 This document compares the artefacts generated from
 `src/core_person/schema/core_person.yaml` (a hand-written LinkML
 approximation of SEMIC Core Person 2.1.1) against the official
-SEMIC artefacts in `originals/`.
+SEMIC artefacts under `original/releases/2.1.1/` (read-only clone of
+<https://github.com/SEMICeu/Core-Person-Vocabulary>).
 
 ## Counts
 
@@ -11,11 +20,19 @@ SEMIC artefacts in `originals/`.
 |-------------------------------------|-------------------------|-------------------------|
 | SHACL `sh:NodeShape` count          | 14                      | 9                       |
 | SHACL `sh:property` count           | 36                      | 36                      |
-| OWL `owl:Class` declarations        | 2 (m8g:ContactPoint, m8g:GenericDate) | 9 (one per LinkML class, with `skos:exactMatch` to original; `GenericDate` removed in favour of slot-level `any_of`) |
+| OWL `owl:Class` declarations        | 2 (m8g:ContactPoint, m8g:GenericDate) | 9 (external IRI subjects when generated with `--no-use-native-uris`; each retains a `skos:exactMatch cpv:Foo` back-pointer to the local namespace) |
 | OWL `owl:DatatypeProperty`          | 5                       | 24                      |
 | OWL `owl:ObjectProperty`            | 3                       | 17                      |
 | classes captured                    | Person, Identifier, Address, ContactPoint, Agent, Jurisdiction, Location, Document, Concept (Code), GenericDate | 9 (GenericDate replaced by slot-level `any_of` of xsd:date / xsd:gYear / xsd:gYearMonth) |
 | total Person properties (SHACL)     | 18                      | 18                      |
+| OWL file size (lines)               | 143                     | 625 with `--no-use-native-uris`, 631 with the default `--use-native-uris` |
+
+**Note on OWL generation flag.** The OWL output bundled in
+`project/owl/core_person.owl.ttl` was produced with the non-default
+`--no-use-native-uris` flag so that subject IRIs match the external
+SEMIC vocabulary (`m8g:`, `foaf:`, `person:`, `locn:`, …) rather than
+the schema-internal `cpv:` namespace. See "OWL: what does not match"
+below for what this flag does and does not solve.
 
 ## SHACL: what matches
 
@@ -75,9 +92,15 @@ SEMIC artefacts in `originals/`.
 
 ## OWL: what matches
 
-- The 10 SEMIC classes all appear with `skos:exactMatch` linking the
-  LinkML-internal IRI (`cpv:Person`) to the canonical IRI
-  (`person:Person`). This is LinkML's standard "shadow class" pattern.
+- The 9 SEMIC classes appear with the external IRI as the subject
+  (`person:Person`, `m8g:ContactPoint`, `foaf:Agent`, …) when generated
+  with `--no-use-native-uris`. A `skos:exactMatch cpv:Foo` back-pointer
+  to the LinkML-internal IRI is still emitted on each class (see "what
+  does not match" item 1).
+- All slots are declared directly under their external IRI
+  (`m8g:birthDate`, `foaf:familyName`, …) when generated with
+  `--no-use-native-uris`, with **no** `skos:exactMatch` back-pointer.
+  The flag fully resolves the IRI-shadowing question for slots.
 - `rdfs:label` and `skos:definition` for every class round-trip from
   LinkML.
 - The vocabulary metadata (`dcterms:license`, `dcterms:title`,
@@ -85,41 +108,48 @@ SEMIC artefacts in `originals/`.
 
 ## OWL: what does not match
 
-1. **Class IRIs differ.** Original declares `m8g:ContactPoint` and
-   `m8g:GenericDate` directly as `owl:Class`. LinkML declares
-   `cpv:ContactPoint` etc. with `skos:exactMatch m8g:ContactPoint`.
-   This is the **single biggest expressivity gap**: a LinkML schema
-   models classes in its own namespace and links out via
-   `class_uri`, but `gen-owl` does not let you flip the class IRI to
-   the external vocabulary.
-2. **Property IRIs differ.** Same problem for slots: LinkML emits
-   `cpv:familyName` (with `skos:exactMatch foaf:familyName`) instead
-   of declaring `foaf:familyName` directly. The original re-uses
-   external property IRIs and only declares the m8g-namespaced ones
-   it owns.
-3. **No `rdfs:isDefinedBy`** is emitted by `gen-owl`. The original has
+1. **Default mode emits shadow IRIs; `--no-use-native-uris` mostly
+   fixes it.** By default (`--use-native-uris`), every class and slot
+   is declared in the schema-internal `cpv:` namespace with a
+   `skos:exactMatch` triple pointing to the external IRI. That is
+   wrong for SEMIC's use case (the spec *re-uses* external IRIs
+   directly). Setting `--no-use-native-uris` flips the subject to
+   the external IRI. For slots, this is a clean fix — no shadow,
+   no back-pointer. For classes, there is a residual issue: a
+   `skos:exactMatch cpv:Foo` back-pointer is still emitted from the
+   external class IRI to the (otherwise unused) local IRI. The
+   relevant code is `linkml/generators/owlgen.py:432-438`. This is a
+   narrow upstream issue to file, not a fundamental capability gap.
+   The previous version of this document overstated this as the
+   "single biggest expressivity gap" — that framing was wrong.
+2. **No `rdfs:isDefinedBy`** is emitted by `gen-owl`. The original has
    `rdfs:isDefinedBy <http://data.europa.eu/m8g>` on every property
    it owns.
-4. **`rdfs:domain` and `rdfs:range` are not produced** as direct
+3. **`rdfs:domain` and `rdfs:range` are not produced** as direct
    triples on properties. LinkML uses
    `owl:Restriction`/`owl:allValuesFrom`/`owl:onProperty` axioms
    under the class instead, which is more verbose and harder to read.
-5. **`skos:scopeNote`** annotations on `birthDate`, `deathDate`,
+4. **`skos:scopeNote`** annotations on `birthDate`, `deathDate`,
    `gender`, `sex`, `ContactPoint` are not modelled by LinkML
    `comments`/`notes` round-tripping into OWL output.
-6. **Multilingual labels** (`@en` and `@nl` on the ontology label) are
+5. **Multilingual labels** (`@en` and `@nl` on the ontology label) are
    lost — LinkML titles are single-string.
-7. **Editor metadata** (`foaf:maker`, `dcterms:mediator`, list of
+6. **Editor metadata** (`foaf:maker`, `dcterms:mediator`, list of
    `<…rec54#editor>` blank nodes) is not modelled in LinkML and is
    absent from the OWL.
 
 ## LinkML expressivity gaps surfaced by this exercise
 
-1. **Cannot redeclare external IRIs as the OWL class/property IRI.**
-   This is the main blocker for SEMIC use: SEMIC vocabularies *re-use*
-   `foaf:`, `person:`, `dcterms:` IRIs directly; LinkML always emits
-   shadow IRIs in its own namespace. The `class_uri` /`slot_uri`
-   slots are only used as `skos:exactMatch` targets in `gen-owl`.
+1. **Residual class-IRI back-pointer in `gen-owl --no-use-native-uris`.**
+   *Not a capability gap — a narrow upstream bug.* The default mode
+   (`--use-native-uris`) emits the LinkML-internal IRI as the OWL
+   subject and `skos:exactMatch` to the external one; that is wrong
+   for SEMIC. `--no-use-native-uris` flips the subject for both
+   classes and slots. For slots this is a clean fix. For classes,
+   a `skos:exactMatch cpv:Foo` back-pointer to the unused local IRI
+   is still emitted (see `linkml/generators/owlgen.py:432-438`). The
+   right next action is a small upstream patch / issue, not a
+   metamodel discussion.
 2. **Cannot model SHACL targets that point at datatype IRIs**
    (Date/Literal/Text/URI shapes in the original). LinkML treats
    datatypes as a closed registry separate from classes.
@@ -218,9 +248,10 @@ laxer semantics is the right approximation.
 
 ## Files
 
-- `originals/core-person-ap.jsonld` — official JSON-LD context
-- `originals/core-person-ap-SHACL.ttl` — official SHACL
-- `originals/core-person-ap.ttl` — official OWL/RDF vocabulary
+- `original/releases/2.1.1/context/core-person-ap.jsonld` — official JSON-LD context
+- `original/releases/2.1.1/shacl/core-person-ap-SHACL.ttl` — official SHACL
+- `original/releases/2.1.1/voc/core-person-ap.ttl` — official OWL/RDF vocabulary
+- `original/releases/2.1.1/index.html` — official HTML spec
 - `src/core_person/schema/core_person.yaml` — LinkML schema
 - `project/shacl/core_person.shacl.ttl` — generated SHACL
 - `project/owl/core_person.owl.ttl` — generated OWL

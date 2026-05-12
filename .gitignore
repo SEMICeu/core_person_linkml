@@ -3,6 +3,11 @@
 # linkml-run-examples output (not useful to have in git in its current form)
 /examples/output/
 
+# Upstream SEMICeu/Core-Person-Vocabulary checkout — read-only reference.
+# Refresh via: rm -rf original && git clone --depth=1 \
+#   https://github.com/SEMICeu/Core-Person-Vocabulary original && rm -rf original/.git
+/original/
+
 # Derived schemas, generated from the schema.yaml
 tmp/
 project/

@@ -1,0 +1,11 @@
+issue_shacl_datatype_targeted_shape.md
+issue_owl_class_backpointer.md
+issue_rdfs_isdefinedby.md
+issue_rdfs_domain_range_direct.md
+issue_skos_scopenote.md
+issue_seealso_property_anchor.md
+issue_custom_xsd_datatype.md
+issue_shacl_property_shape_named_iri.md
+issue_shacl_member_collection.md
+issue_langstring_first_class.md
+issue_multilingual_ontology_label.md
