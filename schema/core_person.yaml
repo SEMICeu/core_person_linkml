@@ -460,6 +460,13 @@ slots:
   dateOfBirth:
     name: dateOfBirth
     definition_uri: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/dateOfBirth
+    annotations:
+      rdfs:seeAlso:
+        tag: rdfs:seeAlso
+        value: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/#Person.birthdate
+      rdfs:isDefinedBy:
+        tag: rdfs:isDefinedBy
+        value: http://data.europa.eu/m8g
     description: The point in time on which the Person was born.
     title: date of birth
     comments:
@@ -1099,7 +1106,7 @@ classes:
     class_uri: skos:Concept
 metamodel_version: 1.11.0
 source_file: core_person.yaml
-source_file_date: '2026-05-12T11:53:44'
-source_file_size: 13358
-generation_date: '2026-05-12T11:53:59'
+source_file_date: '2026-05-12T12:15:05'
+source_file_size: 13959
+generation_date: '2026-05-12T12:15:17'
 
