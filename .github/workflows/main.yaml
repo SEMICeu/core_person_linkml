@@ -19,7 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+        # 3.9 dropped: pyproject.toml pins requires-python >=3.10 because
+        # the linkml/linkml@main checkout (uv workspace, pulled via git)
+        # requires 3.10+. Do not re-add 3.9 — install will fail at resolve.
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
       fail-fast: false
 
     steps:
