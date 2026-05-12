@@ -148,7 +148,11 @@ class Person(ConfiguredBaseModel):
     contactPoint: Optional[list[ContactPoint]] = Field(default=None, title="contact point", description="""The main contact information of the resource.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person'], 'slot_uri': 'm8g:contactPoint'} })
     countryOfBirth: Optional[list[Location]] = Field(default=None, title="country of birth", description="""The country in which the Person was born.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person'], 'slot_uri': 'person:countryOfBirth'} })
     countryOfDeath: Optional[list[Location]] = Field(default=None, title="country of death", description="""The country in which the Person died.""", json_schema_extra = { "linkml_meta": {'domain_of': ['Person'], 'slot_uri': 'person:countryOfDeath'} })
-    dateOfBirth: Optional[list[Union[date, str]]] = Field(default=None, title="date of birth", description="""The point in time on which the Person was born.""", json_schema_extra = { "linkml_meta": {'any_of': [{'range': 'date'}, {'range': 'gYear'}, {'range': 'gYearMonth'}],
+    dateOfBirth: Optional[list[Union[date, str]]] = Field(default=None, title="date of birth", description="""The point in time on which the Person was born.""", json_schema_extra = { "linkml_meta": {'annotations': {'rdfs:isDefinedBy': {'tag': 'rdfs:isDefinedBy',
+                                              'value': 'http://data.europa.eu/m8g'},
+                         'rdfs:seeAlso': {'tag': 'rdfs:seeAlso',
+                                          'value': 'https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/#Person.birthdate'}},
+         'any_of': [{'range': 'date'}, {'range': 'gYear'}, {'range': 'gYearMonth'}],
          'comments': ['The date of birth could be expressed as date, gYearMonth or '
                       'gYear, e.g. 1980-09-16, 1980-09, 1980.'],
          'domain_of': ['Person'],

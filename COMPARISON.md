@@ -25,14 +25,103 @@ SEMIC artefacts under `original/releases/2.1.1/` (read-only clone of
 | OWL `owl:ObjectProperty`            | 3                       | 17                      |
 | classes captured                    | Person, Identifier, Address, ContactPoint, Agent, Jurisdiction, Location, Document, Concept (Code), GenericDate | 9 (GenericDate replaced by slot-level `any_of` of xsd:date / xsd:gYear / xsd:gYearMonth) |
 | total Person properties (SHACL)     | 18                      | 18                      |
-| OWL file size (lines)               | 143                     | 625 with `--no-use-native-uris`, 631 with the default `--use-native-uris` |
+| OWL file size (lines)               | 143                     | **377** as currently configured; was 625 before the 2026-05-12 run adopted the cardinality-trim flags |
 
-**Note on OWL generation flag.** The OWL output bundled in
-`project/owl/core_person.owl.ttl` was produced with the non-default
-`--no-use-native-uris` flag so that subject IRIs match the external
-SEMIC vocabulary (`m8g:`, `foaf:`, `person:`, `locn:`, …) rather than
-the schema-internal `cpv:` namespace. See "OWL: what does not match"
-below for what this flag does and does not solve.
+**Note on OWL generation flags.** The OWL output bundled in
+`project/owl/core_person.owl.ttl` is produced with this combination
+(wired into `config.public.mk` `LINKML_GENERATORS_OWL_ARGS`):
+
+- `--no-use-native-uris` — subject IRIs match the external SEMIC
+  vocabulary (`m8g:`, `foaf:`, `person:`, `locn:`, …) rather than the
+  schema-internal `cpv:` namespace. Residual class-IRI back-pointer
+  remains (see "OWL: what does not match" item 1).
+- `--metadata-profile rdfs` — `gen-owl` emits `rdfs:label` /
+  `rdfs:comment` for each class and property instead of
+  `skos:definition`. Matches the upstream OWL style — `skos:definition`
+  count dropped to 0 in this run, `rdfs:comment` count is now 49.
+- `--ontology-uri-suffix ""` — the `owl:Ontology` IRI is now the bare
+  schema `id` (`…/2.1.1`) instead of `…/2.1.1.owl.ttl`.
+- `--skip-vacuous-local-range-axioms`,
+  `--skip-vacuous-min-zero-cardinality-axioms`,
+  `--consolidate-cardinality-axioms` — strip the vacuous
+  `owl:Restriction` axioms (just-emit-because-LinkML-can) that
+  previously bloated the output 4× over upstream. `owl:Restriction`
+  blocks dropped from many to **2** for the entire schema. These flags
+  are LinkML-side defaults-to-be (deprecation warnings flag them as
+  flipping in a future release); enabling them now also silences the
+  forward-compat noise.
+
+## Closed (or partially closed) in this run — 2026-05-12
+
+This is the first `align-model` run after the harness was set up. The
+following changes were applied to the pipeline by reading recent
+`linkml/linkml` merges and trying the new CLI flags:
+
+1. **OWL bloat — closed.** Three new flags merged in `linkml/linkml`
+   (forewarned by deprecation warnings — see [linkml#3190](https://github.com/linkml/linkml/issues/3190),
+   [linkml#3191](https://github.com/linkml/linkml/issues/3191))
+   — `--skip-vacuous-local-range-axioms`,
+   `--skip-vacuous-min-zero-cardinality-axioms`,
+   `--consolidate-cardinality-axioms` — drop the redundant
+   `owl:Restriction` blocks. **OWL output: 625 → 377 lines**
+   (`owl:Restriction` count: many → 2). Upstream is 143; the
+   remaining 234 lines are mostly per-property declarations that
+   genuinely have no upstream counterpart (LinkML emits one for every
+   slot; the SEMIC OWL is intentionally thin).
+
+2. **OWL `skos:definition` → `rdfs:comment` — closed via
+   `--metadata-profile rdfs`.** All class/property documentation now
+   round-trips into the upstream-canonical `rdfs:comment` channel.
+   `skos:definition` count: 18 → 0.  `rdfs:comment` count: 0 → 49.
+
+3. **OWL ontology IRI cleanup — closed via
+   `--ontology-uri-suffix ""`.** Was `…/2.1.1.owl.ttl`, now `…/2.1.1`
+   — matching the schema `id` exactly.
+
+4. **`rdfs:seeAlso` per-property spec-anchor — channel proven, partial
+   apply.** With `config.yaml` `shacl.include_annotations: true` plus
+   per-slot `annotations: { rdfs:seeAlso: <url> }`, gen-shacl now
+   emits the `rdfs:seeAlso` triple **as an IRI** on the (still
+   blank-node) property shape, and gen-owl emits it on the property
+   declaration (as a string literal — minor inconsistency between the
+   two generators). Demonstrated end-to-end on `m8g:birthDate`. The
+   remaining 30+ slots are not yet annotated; that's mechanical
+   follow-up work, not a LinkML expressivity gap.
+
+5. **`rdfs:isDefinedBy` per-property — same channel as (4).**
+   Demonstrated on `m8g:birthDate` (`rdfs:isDefinedBy <http://data.europa.eu/m8g>`
+   in SHACL, `rdfs:isDefinedBy "http://data.europa.eu/m8g"` in OWL).
+   Same caveats: rest of the slots not yet annotated; OWL emits the
+   value as a string literal while SHACL treats it as an IRI.
+
+6. **`rdfs:range` direct triple — was never a gap.** The previous
+   `issue_rdfs_domain_range_direct.md` claimed `rdfs:range` is only
+   emitted as `owl:Restriction` axioms. Recount on the regenerated
+   file: 39 direct `rdfs:range` triples on properties. The actual
+   residual gap is `rdfs:domain` only — `gen-owl` emits 0 of them
+   regardless of flags tested. (Issue file is human-curated; flag for
+   correction in next run.)
+
+## Still open — captured under `issues/`
+
+The 11 issue files remain valid descriptions for the following gaps
+(see `issues/track_issues.txt`):
+
+- SHACL targets pointing at datatype IRIs
+- residual `skos:exactMatch cpv:Foo` class back-pointer in OWL
+- `rdfs:isDefinedBy` not auto-emitted for re-used external vocab properties
+  (manual annotations work but require per-slot effort)
+- `rdfs:domain` not emitted on properties
+- `skos:scopeNote` round-trip (LinkML `comments` lands on `skos:note`,
+  not `skos:scopeNote`)
+- per-property `rdfs:seeAlso` to spec anchors (manual annotations work
+  but require per-slot effort, plus an OWL string-vs-IRI mismatch)
+- custom `xsd:gYear` / `xsd:gYearMonth` types collapse in Pydantic and
+  JSON Schema
+- property shapes as blank nodes vs named IRIs
+- top-of-file `rdfs:member` collection of NodeShapes
+- `rdf:langString` as a first-class LinkML type
+- multilingual ontology-header titles
 
 ## SHACL: what matches
 

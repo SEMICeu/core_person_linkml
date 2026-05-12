@@ -3,15 +3,26 @@
 # The directory where the generated files are stored
 # directory: "tmp"
 
-# By default all generators are run. Specify here the ones to skip.
-excludes:
-  - markdown
-
-# Alternatively only specify the generators to run
-# (comment out the above "excludes" section)
-# includes:
-#   - markdown
-#   - excel
+# Only run the generators we ship as published artefacts under project/.
+# Everything else (excel, graphql, prefixmap, proto, shex, typescript,
+# java, markdown) is omitted to keep the published surface small. The
+# `python` generator is included because its output is moved out of
+# project/ into src/core_person/datamodel/ by the justfile. The OWL
+# generator is included here but is also re-invoked separately by the
+# justfile with extra flags (`--metadata-profile rdfs`,
+# `--ontology-uri-suffix ''`, vacuous-axiom skips) that aren't
+# expressible in this config — see config.public.mk
+# (LINKML_GENERATORS_OWL_ARGS). Per-class/per-slot Markdown for the
+# docs site is produced by `just gen-doc` (gen-doc, not gen-project)
+# and lands under `docs/elements/`.
+includes:
+  - jsonld
+  - jsonldcontext
+  - jsonschema
+  - owl
+  - shacl
+  - sqltable
+  - python
 
 # Set the arguments for the generators (no matter if they run or not)
 generator_args:
@@ -23,6 +34,13 @@ generator_args:
     type_objects: false
     add_root_classes: true
     mixins_as_expressions: true
+    # Emit class IRIs based on class_uri (e.g. person:Person) rather
+    # than the schema's default-prefix native IRI (cpv:Person). This
+    # matches the upstream SEMIC Core Person vocabulary identifiers.
+    # Note: this only affects the gen-project OWL pass — the justfile's
+    # separate gen-owl call also passes `--no-use-native-uris`, so the
+    # final OWL output is consistent either way.
+    use_native_uris: false
   markdown:
     mergeimports: true
     directory: "docs/elements"
@@ -52,8 +70,19 @@ generator_args:
     mergeimports: true
   shacl:
     mergeimports: true
+    # Match SEMIC Core Person semantics: open shapes (no sh:closed true).
+    # Mixin/abstract classes already get sh:closed false; this flag
+    # turns it off uniformly. See COMPARISON.md.
     closed: false
+    # Append 'Shape' to class_uri-derived shape IRIs to match the
+    # upstream convention (e.g. person:Person -> person:PersonShape).
+    # Available since linkml main (gen-shacl --suffix).
     suffix: Shape
+    # include_annotations honours schema-level slot/class `annotations:`
+    # blocks (e.g. for emitting `rdfs:seeAlso` HTML spec anchors on each
+    # property shape). Without this flag, those annotations are silently
+    # dropped from the SHACL output.
+    include_annotations: true
   shex:
     mergeimports: true
   sqlddl:

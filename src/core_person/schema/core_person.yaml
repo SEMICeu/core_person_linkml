@@ -242,6 +242,15 @@ slots:
       - >-
         The date of birth could be expressed as date, gYearMonth or
         gYear, e.g. 1980-09-16, 1980-09, 1980.
+    # Demonstrating the annotation channel that closes two long-standing
+    # gaps (see COMPARISON.md "Closed in this run"): `rdfs:seeAlso` to the
+    # spec HTML anchor, and `rdfs:isDefinedBy` to the m8g vocabulary IRI.
+    # Round-trips into the SHACL property shape (with config.yaml
+    # `include_annotations: true`) and into the OWL property declaration
+    # by default. The remaining 30+ slots have not yet been annotated.
+    annotations:
+      rdfs:seeAlso: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/#Person.birthdate
+      rdfs:isDefinedBy: http://data.europa.eu/m8g
 
   dateOfDeath:
     slot_uri: m8g:deathDate

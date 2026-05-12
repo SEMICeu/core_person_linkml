@@ -106,20 +106,24 @@ gen-python:
   uv run gen-project -d  {{pymodel}} -I python {{source_schema_path}}
   uv run gen-pydantic {{gen_pydantic_args}} {{source_schema_path}} > {{pymodel}}/{{schema_name}}_pydantic.py
 
-# Generate project files including Python data model
+# Generate project files including Python data model.
+#
+# The set of artefacts under project/ is governed by the `includes`
+# list in config.yaml (jsonld, jsonldcontext, jsonschema, owl, shacl,
+# sqltable, python). gen-pydantic and gen-owl are still invoked
+# separately:
+#  - gen-pydantic: not yet supported by gen-project
+#    (linkml/linkml#2537).
+#  - gen-owl: overrides the basic OWL gen-project pass with the
+#    customised flags from config.public.mk
+#    (LINKML_GENERATORS_OWL_ARGS) — `--metadata-profile rdfs`,
+#    `--ontology-uri-suffix ''`, vacuous-axiom skips, etc. These
+#    aren't expressible in config.yaml.
 [group('model development')]
 gen-project:
   uv run gen-project {{config_yaml}} -d {{dest}} {{source_schema_path}}
   mv {{dest}}/*.py {{pymodel}}
   uv run gen-pydantic {{gen_pydantic_args}} {{source_schema_path}} > {{pymodel}}/{{schema_name}}_pydantic.py
-
-  @# Some generators ignore config_yaml or cannot create directories, so we run them separately.
-  uv run gen-java {{gen_java_args}} --output-directory {{dest}}/java/ {{source_schema_path}}
-
-  @if [ ! -d "{{dest}}/typescript" ]; then \
-    mkdir -p {{dest}}/typescript ; \
-  fi
-  uv run gen-typescript {{gen_ts_args}} {{source_schema_path}} > {{dest}}/typescript/{{schema_name}}.ts
 
   @if [ ! -d "{{dest}}/owl" ]; then \
     mkdir -p {{dest}}/owl ; \

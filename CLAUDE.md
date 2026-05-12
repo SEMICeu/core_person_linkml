@@ -96,13 +96,27 @@ Run a single pytest: `uv run pytest tests/path/to/test.py::test_name`.
 
 The SHACL output is generated with `--non-closed` (see `config.yaml`/justfile)
 to match SEMIC's open-shape semantics — don't switch to closed shapes without
-updating COMPARISON.md.
+updating COMPARISON.md. `config.yaml` also sets `shacl.include_annotations:
+true`, which lets per-slot `annotations:` blocks round-trip into property
+shapes (used today to inject `rdfs:seeAlso` and `rdfs:isDefinedBy`).
 
-The OWL output is generated with `--no-use-native-uris` so that subject IRIs
-match the external SEMIC vocabulary (`person:`, `foaf:`, `m8g:`, …) rather
-than the schema-internal `cpv:` namespace. See `COMPARISON.md` ("OWL: what
-does not match") for the residual `skos:exactMatch cpv:Foo` back-pointer
-issue this flag does *not* fix.
+The OWL output is generated with a flag combination wired into
+`LINKML_GENERATORS_OWL_ARGS` in `config.public.mk`:
+
+- `--no-use-native-uris` — OWL subjects match the external SEMIC IRIs
+  (`person:`, `foaf:`, `m8g:`, …) rather than the schema-internal `cpv:`
+  namespace. Residual `skos:exactMatch cpv:Foo` class back-pointer remains
+  (see `COMPARISON.md` "OWL: what does not match" item 1).
+- `--metadata-profile rdfs` — emits `rdfs:label` / `rdfs:comment` instead of
+  `skos:definition`, matching upstream OWL style.
+- `--ontology-uri-suffix ""` — the ontology IRI is the bare schema `id`
+  (`…/2.1.1`) instead of `…/2.1.1.owl.ttl`.
+- `--skip-vacuous-local-range-axioms`,
+  `--skip-vacuous-min-zero-cardinality-axioms`,
+  `--consolidate-cardinality-axioms` — strip the redundant
+  `owl:Restriction` axioms LinkML otherwise emits, shrinking the file
+  from ~615 to ~375 lines. These are LinkML-side defaults-to-be (the
+  deprecation warnings flag the upcoming flip).
 
 ## Schema architecture
 
