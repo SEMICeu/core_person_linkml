@@ -1,0 +1,5 @@
+# Invalid Person: `fullName` is multivalued with range LangString, so
+# every entry must be a string. Passing an integer (`42`) violates the
+# datatype constraint and `linkml-run-examples` should reject this.
+fullName:
+  - 42
