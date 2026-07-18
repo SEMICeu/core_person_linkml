@@ -1106,7 +1106,7 @@ classes:
     class_uri: skos:Concept
 metamodel_version: 1.11.0
 source_file: core_person.yaml
-source_file_date: '2026-07-18T05:10:03'
+source_file_date: '2026-07-18T06:08:17'
 source_file_size: 13959
-generation_date: '2026-07-18T05:10:19'
+generation_date: '2026-07-18T06:08:33'
 
