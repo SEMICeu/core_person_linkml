@@ -1,5 +1,5 @@
 # Auto generated from core_person.yaml by pythongen.py version: 0.0.1
-# Generation date: 2026-05-12T15:26:54
+# Generation date: 2026-07-18T08:14:13
 # Schema: core_person
 #
 # id: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1

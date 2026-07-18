@@ -2,9 +2,10 @@
 
 | Field | Value |
 |---|---|
-| Last refreshed | 2026-05-12 |
-| LinkML (generators) commit | `1c5f68e43a6960ec1066521f0d5bb112cebde21a` (1.11.0rc3.post8.dev0+1c5f68e4) |
-| linkml-runtime commit | `1c5f68e43a6960ec1066521f0d5bb112cebde21a` (1.11.0rc3.post8.dev0+1c5f68e4) |
+| Last refreshed | 2026-07-18 |
+| LinkML (generators) commit | `1288dbb6e9a6df8d1f04e250a1fb48af635bd530` (1.11.0.post159.dev0+1288dbb6) |
+| linkml-runtime commit | `1288dbb6e9a6df8d1f04e250a1fb48af635bd530` (1.11.0.post159.dev0+1288dbb6) |
+| Previous refresh | 2026-05-12 @ `1c5f68e4` (~159 upstream commits earlier) |
 | Upstream release | SEMIC Core Person Vocabulary **2.1.1** |
 | Upstream sources | `original/releases/2.1.1/{shacl,context,voc,html}/` |
 
@@ -19,13 +20,13 @@ SEMIC artefacts under `original/releases/2.1.1/` (read-only clone of
 | metric                              | original                | linkml output           |
 |-------------------------------------|-------------------------|-------------------------|
 | SHACL `sh:NodeShape` count          | 14                      | 9                       |
-| SHACL `sh:property` count           | 36                      | 36                      |
-| OWL `owl:Class` declarations        | 2 (m8g:ContactPoint, m8g:GenericDate) | 9 (external IRI subjects when generated with `--no-use-native-uris`; each retains a `skos:exactMatch cpv:Foo` back-pointer to the local namespace) |
-| OWL `owl:DatatypeProperty`          | 5                       | 24                      |
-| OWL `owl:ObjectProperty`            | 3                       | 17                      |
+| SHACL property shapes (`sh:path`)   | ~37                     | 41 (one per slot assignment; each now a labelled top-level blank node `_:c14nNN` post-RDFC-1.0) |
+| OWL `owl:Class` declarations        | 2 (m8g:ContactPoint, m8g:GenericDate) | 9 (external IRI subjects when generated with `--no-use-native-uris`; each retains a `skos:exactMatch cpv:Foo` back-pointer to the local namespace — intentional, see [linkml#2693](https://github.com/linkml/linkml/pull/2693)) |
+| OWL `owl:DatatypeProperty` (string occurrences) | 5           | 25 (`dcterms:identifier` is typed as both Datatype+Object, so counts overlap) |
+| OWL `owl:ObjectProperty` (string occurrences)   | 3           | 15                      |
 | classes captured                    | Person, Identifier, Address, ContactPoint, Agent, Jurisdiction, Location, Document, Concept (Code), GenericDate | 9 (GenericDate replaced by slot-level `any_of` of xsd:date / xsd:gYear / xsd:gYearMonth) |
 | total Person properties (SHACL)     | 18                      | 18                      |
-| OWL file size (lines)               | 143                     | **377** as currently configured; was 625 before the 2026-05-12 run adopted the cardinality-trim flags |
+| OWL file size (lines)               | 143                     | **345** as currently configured (was 377 on 2026-05-12; the 32-line drop is the new pyoxigraph RDFC-1.0 serialization compacting blank-node lists, not a content change — see "Changed in this run"). Was 625 before the cardinality-trim flags |
 
 **Note on OWL generation flags.** The OWL output bundled in
 `project/owl/core_person.owl.ttl` is produced with this combination
@@ -51,7 +52,79 @@ SEMIC artefacts under `original/releases/2.1.1/` (read-only clone of
   flipping in a future release); enabling them now also silences the
   forward-compat noise.
 
-## Closed (or partially closed) in this run — 2026-05-12
+## Changed in this run — 2026-07-18
+
+LinkML `main` moved ~159 commits (`1c5f68e4` → `1288dbb6`). The schema
+source was **not** edited this run; every change below is upstream
+generator behaviour. `just gen-project`, `just gen-doc` and `just test`
+all run clean (3 pytest + `linkml-run-examples` pass).
+
+1. **RDF output is now canonicalised (pyoxigraph RDFC-1.0).** Both the
+   SHACL and OWL Turtle are now serialised through the deterministic
+   pyoxigraph RDFC-1.0 canonicaliser
+   ([linkml#3407](https://github.com/linkml/linkml/pull/3407),
+   hardened by [linkml#3524](https://github.com/linkml/linkml/pull/3524)).
+   Effect: property/restriction/list blank nodes that were previously
+   inlined as `[ … ]` / `( … )` are now emitted as **top-level labelled
+   blank nodes** (`_:c14n0`, `_:c14n1`, …) with stable, content-derived
+   labels. The graph is **semantically identical** — same targets, paths,
+   datatypes, cardinalities, `sh:or` unions — just flattened and
+   diff-stable across runs/processes. This is a net win for the
+   evaluation (deterministic diffs) at some cost to human readability.
+   It also accounts for the OWL line count dropping 377 → 345.
+   Consequence for the existing "property shapes as blank nodes vs named
+   IRIs" gap: **unchanged** — they are still blank nodes, now merely
+   labelled `_:c14nNN` instead of nested. Still not externally
+   referenceable.
+
+2. **New `sh:ignoredProperties ( rdf:type )` on every NodeShape**
+   ([linkml#3518](https://github.com/linkml/linkml/pull/3518) sorts it for
+   determinism; the emission itself is now default `shaclgen` behaviour).
+   All 9 generated NodeShapes now carry `sh:ignoredProperties` listing
+   `rdf:type`. Upstream SEMIC SHACL has **none**. There is no CLI flag to
+   suppress it (`gen-shacl --help` exposes only `--closed/--non-closed`
+   and `--message-template`). Classified as **added LinkML noise** (like
+   `sh:nodeKind` / `sh:order` below), not a missing-capability gap.
+   Candidate for an upstream "make ignoredProperties opt-out" request.
+
+3. **New `skos:inScheme <…/2.1.1>` on every OWL class and property.**
+   `gen-owl` now stamps each declared term with `skos:inScheme` pointing
+   at the ontology IRI. Upstream OWL has none. Harmless / arguably
+   correct provenance, but a divergence. Classified as **added LinkML
+   noise**, not a gap.
+
+4. **`skos:exactMatch cpv:Foo` class back-pointer is now confirmed
+   *intentional*, not a bug.**
+   [linkml#2693](https://github.com/linkml/linkml/pull/2693) ("Make
+   `class_uri` be `skos:exactMatch` of the element URI on JSON-LD and
+   RDF", closes #2687) makes this back-pointer deliberate generator
+   behaviour. The 2026-05-12 framing ("a narrow upstream bug in
+   `owlgen.py:432-438` to file") is therefore **withdrawn** — there is
+   nothing to file; with `--no-use-native-uris` the external IRI is the
+   subject and the `skos:exactMatch cpv:Foo` link back to the internal
+   IRI is by design. Count unchanged: 9 back-pointers (one per class).
+
+### Flags evaluated and **not** adopted this run
+
+- **`--xsd-anyuri-as-iri`** (new cross-generator flag,
+  [linkml#3292](https://github.com/linkml/linkml/pull/3292); available on
+  `gen-owl` and `gen-jsonld-context`). It re-types `xsd:anyURI`-ranged
+  slots as IRIs (`owl:ObjectProperty` in OWL, `@type: @id` in the JSON-LD
+  context) instead of literals. **Rejected because it moves us away from
+  upstream.** Our three `uri`-typed slots — `schemeUri` (`dcterms:conformsTo`),
+  `jurisdictionId` (`dcterms:identifier` on Jurisdiction) and
+  `geographicIdentifier` (`rdfs:seeAlso`) — are each declared
+  `@type: xsd:anyURI` in the **upstream** JSON-LD context, and our current
+  output already matches that exactly. Adopting the flag would flip all
+  three to `@id` and diverge. (Note the upstream context is itself
+  inconsistent: `Person.identifier`, `issuingAuthorityUri` and the
+  object-valued slots are `@id`, but the three above stay `xsd:anyURI`.
+  We reproduce the upstream inconsistency faithfully.)
+- **`--message-template`** for `sh:message` on property shapes
+  ([linkml#3450](https://github.com/linkml/linkml/pull/3450)). Not
+  adopted — upstream SHACL emits no `sh:message`; adding it would diverge.
+
+## Closed (or partially closed) in a previous run — 2026-05-12
 
 This is the first `align-model` run after the harness was set up. The
 following changes were applied to the pipeline by reading recent
@@ -108,7 +181,6 @@ The 11 issue files remain valid descriptions for the following gaps
 (see `issues/track_issues.txt`):
 
 - SHACL targets pointing at datatype IRIs
-- residual `skos:exactMatch cpv:Foo` class back-pointer in OWL
 - `rdfs:isDefinedBy` not auto-emitted for re-used external vocab properties
   (manual annotations work but require per-slot effort)
 - `rdfs:domain` not emitted on properties
@@ -122,6 +194,21 @@ The 11 issue files remain valid descriptions for the following gaps
 - top-of-file `rdfs:member` collection of NodeShapes
 - `rdf:langString` as a first-class LinkML type
 - multilingual ontology-header titles
+
+**Reclassified 2026-07-18 (no longer tracked as LinkML gaps):**
+
+- ~~residual `skos:exactMatch cpv:Foo` class back-pointer in OWL~~ —
+  confirmed intentional generator behaviour
+  ([linkml#2693](https://github.com/linkml/linkml/pull/2693)); nothing to
+  fix. Any corresponding issue file should be closed.
+
+**New divergences 2026-07-18 (added LinkML noise, not capability gaps):**
+
+- `sh:ignoredProperties ( rdf:type )` on every SHACL NodeShape
+  ([linkml#3518](https://github.com/linkml/linkml/pull/3518)); no
+  suppression flag — candidate for an upstream opt-out request.
+- `skos:inScheme <…/2.1.1>` on every OWL class and property (`gen-owl`
+  default). Both absent from upstream artefacts.
 
 ## SHACL: what matches
 
@@ -170,11 +257,16 @@ The 11 issue files remain valid descriptions for the following gaps
    `sh:BlankNodeOrIRI`); the original SHACL omits `sh:nodeKind`. Not
    wrong, but adds noise.
 5. **`sh:order`** is added by LinkML and not present in the original.
-6. **Property shapes are inlined as blank nodes** in the LinkML output
-   instead of named `…/<sha-hash>` IRIs. The original hash-named
-   property shapes can be referenced from outside; LinkML's blank
-   nodes cannot.
-7. **No `sh:datatype xsd:anyURI` constraint** for `Identifier.schemeUri`
+6. **Property shapes are blank nodes** in the LinkML output instead of
+   named `…/<sha-hash>` IRIs. Since 2026-07-18 they are emitted as
+   top-level *labelled* blank nodes (`_:c14nNN`, pyoxigraph RDFC-1.0)
+   rather than inlined `[ … ]`, but they are still blank nodes: the
+   original hash-named property shapes can be referenced from outside;
+   LinkML's cannot.
+7. **`sh:ignoredProperties ( rdf:type )`** is added by LinkML on every
+   NodeShape since 2026-07-18 (`shaclgen` default; no suppression flag).
+   The original SHACL has none. Added noise, not a capability gap.
+8. **No `sh:datatype xsd:anyURI` constraint** for `Identifier.schemeUri`
    gets a `sh:nodeKind sh:Literal` from LinkML, while semantically the
    original treats it as a URI literal — actually they match here, but
    `Jurisdiction.id` (also `xsd:anyURI`) has the same shape; matches.
@@ -226,19 +318,29 @@ The 11 issue files remain valid descriptions for the following gaps
 6. **Editor metadata** (`foaf:maker`, `dcterms:mediator`, list of
    `<…rec54#editor>` blank nodes) is not modelled in LinkML and is
    absent from the OWL.
+7. **`skos:inScheme <…/2.1.1>`** is added by LinkML on every class and
+   property since 2026-07-18 (`gen-owl` default). The original OWL has
+   none. Added noise (arguably-correct provenance), not a capability gap.
+8. **`skos:exactMatch cpv:Foo` back-pointer on each class** — retained
+   from `--no-use-native-uris`. As of 2026-07-18 this is confirmed
+   *intentional* generator behaviour
+   ([linkml#2693](https://github.com/linkml/linkml/pull/2693)), not a bug
+   to file. 9 occurrences (one per class).
 
 ## LinkML expressivity gaps surfaced by this exercise
 
 1. **Residual class-IRI back-pointer in `gen-owl --no-use-native-uris`.**
-   *Not a capability gap — a narrow upstream bug.* The default mode
-   (`--use-native-uris`) emits the LinkML-internal IRI as the OWL
-   subject and `skos:exactMatch` to the external one; that is wrong
-   for SEMIC. `--no-use-native-uris` flips the subject for both
-   classes and slots. For slots this is a clean fix. For classes,
-   a `skos:exactMatch cpv:Foo` back-pointer to the unused local IRI
-   is still emitted (see `linkml/generators/owlgen.py:432-438`). The
-   right next action is a small upstream patch / issue, not a
-   metamodel discussion.
+   *Not a capability gap, and — as of 2026-07-18 — not a bug either.*
+   The default mode (`--use-native-uris`) emits the LinkML-internal IRI
+   as the OWL subject and `skos:exactMatch` to the external one.
+   `--no-use-native-uris` flips the subject to the external IRI for both
+   classes and slots. For slots this is a clean fix. For classes, a
+   `skos:exactMatch cpv:Foo` back-pointer to the local IRI is still
+   emitted — but [linkml#2693](https://github.com/linkml/linkml/pull/2693)
+   confirms this is **intentional** (`class_uri` is deliberately made a
+   `skos:exactMatch` of the element URI on JSON-LD and RDF). Nothing to
+   file; nothing to fix. The previous "narrow upstream bug in
+   `owlgen.py:432-438`" framing is withdrawn.
 2. **Cannot model SHACL targets that point at datatype IRIs**
    (Date/Literal/Text/URI shapes in the original). LinkML treats
    datatypes as a closed registry separate from classes.

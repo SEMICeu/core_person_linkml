@@ -10,3 +10,5 @@ issue_shacl_member_collection.md
 issue_langstring_first_class.md
 issue_multilingual_ontology_label.md
 issue_owl_annotation_value_string.md
+issue_shacl_ignored_properties.md
+issue_owl_inscheme.md
