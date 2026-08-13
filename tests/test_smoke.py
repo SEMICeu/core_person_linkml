@@ -28,7 +28,7 @@ def test_schema_loads_via_linkml_runtime():
 
     sv = SchemaView(str(SCHEMA_PATH))
     classes = sv.all_classes()
-    # The 9 entity classes documented in CLAUDE.md.
+    # The 11 semantic classes in the Core Person 2.1.2 candidate.
     expected = {
         "Person",
         "Identifier",
@@ -38,7 +38,9 @@ def test_schema_loads_via_linkml_runtime():
         "Jurisdiction",
         "Location",
         "Document",
-        "Concept",
+        "AdministrativeUnit",
+        "Code",
+        "GenericDate",
     }
     missing = expected - set(classes)
     assert not missing, f"expected classes missing from schema: {sorted(missing)}"

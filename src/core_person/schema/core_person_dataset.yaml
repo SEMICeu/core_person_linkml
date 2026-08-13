@@ -1,0 +1,61 @@
+id: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.2/linkml/dataset.yaml
+name: core_person_2_1_2_dataset
+title: Core Person 2.1.2 editing dataset
+description: >-
+  Non-publication wrapper for LinkML editors that require exactly one tree root.
+  The imported core_person.yaml remains the canonical semantic module.
+
+prefixes:
+  linkml: https://w3id.org/linkml/
+  cp212: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.2/linkml/
+default_prefix: cp212
+default_range: string
+imports:
+  - linkml:types
+  - core_person
+
+classes:
+  CorePersonDataset:
+    tree_root: true
+    description: Editing container; exclude from SHACL, RDF and OWL publication.
+    attributes:
+      persons:
+        range: Person
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      addresses:
+        range: Address
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      administrative_units:
+        range: AdministrativeUnit
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      agents:
+        range: Agent
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      contact_points:
+        range: ContactPoint
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      identifiers:
+        range: Identifier
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      jurisdictions:
+        range: Jurisdiction
+        multivalued: true
+        inlined: true
+        inlined_as_list: true
+      locations:
+        range: Location
+        multivalued: true
+        inlined: true
+        inlined_as_list: true

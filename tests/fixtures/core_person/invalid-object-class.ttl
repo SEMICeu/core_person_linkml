@@ -1,0 +1,6 @@
+@prefix ex: <https://example.org/> .
+@prefix m8g: <http://data.europa.eu/m8g/> .
+@prefix person: <http://www.w3.org/ns/person#> .
+
+ex:person a person:Person ;
+    m8g:sex ex:untypedCode .

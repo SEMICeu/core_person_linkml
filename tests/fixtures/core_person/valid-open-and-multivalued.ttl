@@ -1,0 +1,13 @@
+@prefix ex: <https://example.org/> .
+@prefix m8g: <http://data.europa.eu/m8g/> .
+@prefix person: <http://www.w3.org/ns/person#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+ex:person a person:Person ;
+    foaf:name "Alice"@en, "Alicia"@es ;
+    m8g:birthDate 1980, "1980-09" ;
+    m8g:sex ex:female ;
+    ex:extensionProperty "Open shapes allow this" .
+
+ex:female a skos:Concept .

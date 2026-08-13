@@ -1,508 +1,345 @@
-id: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1
-name: core_person
-title: Core Person Vocabulary
+id: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.2/linkml/core-person.yaml
+name: core_person_2_1_2
+title: SEMIC Core Person Vocabulary 2.1.2 — LinkML candidate
+version: 2.1.2
 description: >-
-  LinkML approximation of the SEMIC Core Person Vocabulary 2.1.1.
-  The Core Person Vocabulary captures the fundamental characteristics
-  of a person, e.g. name, gender, date of birth, etc. It is the
-  ontological backbone for several Core Vocabularies and Application
-  Profiles published by SEMIC.
+  LinkML candidate for the SEMIC Core Person Vocabulary 2.1.2. The official
+  SHACL distribution remains authoritative. This schema preserves its open,
+  optional and multivalued property semantics; SEMIC generator extensions are
+  used for sh:uniqueLang and unrestricted RDF literal constraints.
 license: https://creativecommons.org/licenses/by/4.0/
-version: 2.1.1
 
 prefixes:
   linkml: https://w3id.org/linkml/
-  cpv: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/
+  cp212: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.2/linkml/
   m8g: http://data.europa.eu/m8g/
   person: http://www.w3.org/ns/person#
-  foaf: http://xmlns.com/foaf/0.1/
   locn: http://www.w3.org/ns/locn#
   adms: http://www.w3.org/ns/adms#
-  dcterms: http://purl.org/dc/terms/
+  dct: http://purl.org/dc/terms/
+  foaf: http://xmlns.com/foaf/0.1/
   skos: http://www.w3.org/2004/02/skos/core#
-  rdfs: http://www.w3.org/2000/01/rdf-schema#
   rdf: http://www.w3.org/1999/02/22-rdf-syntax-ns#
+  rdfs: http://www.w3.org/2000/01/rdf-schema#
   xsd: http://www.w3.org/2001/XMLSchema#
-  owl: http://www.w3.org/2002/07/owl#
 
-default_prefix: cpv
-default_range: string
-
+default_prefix: cp212
+default_range: rdf_literal
 imports:
   - linkml:types
 
-# --------------------------------------------------------------------
-# Custom types
-# --------------------------------------------------------------------
+annotations:
+  semic_source_release: Core Person 2.1.2
+  semic_source_commit: a1b13f2bed9fd97b28420b0cef7f0032da08d148
+  semic_authority: official SHACL distribution
+  semic_profile: open shapes; all properties optional and multivalued
 
 types:
-  LangString:
-    name: LangString
-    typeof: string
+  lang_string:
     uri: rdf:langString
-    description: A natural-language string with an optional language tag.
     base: str
-
-  gYear:
-    name: gYear
-    uri: xsd:gYear
+    description: An RDF language-tagged string.
+  rdf_literal:
+    uri: rdfs:Literal
     base: str
     description: >-
-      An XSD gregorian year (e.g. "1980"). Represents a year value
-      in the proleptic Gregorian calendar without a month or day.
-      Backed by Python str because Python has no native gYear type.
-
-  gYearMonth:
-    name: gYearMonth
-    uri: xsd:gYearMonth
+      Any RDF literal. The SEMIC SHACL adapter emits only sh:nodeKind sh:Literal
+      and intentionally removes the overly restrictive sh:datatype rdfs:Literal.
+  any_uri_literal:
+    uri: xsd:anyURI
     base: str
     description: >-
-      An XSD gregorian year-month (e.g. "1980-09"). Represents a
-      specific month of a specific year in the proleptic Gregorian
-      calendar without a day. Backed by Python str because Python has
-      no native gYearMonth type.
-
-# --------------------------------------------------------------------
-# Classes
-# --------------------------------------------------------------------
-
-classes:
-
-  Person:
-    class_uri: person:Person
-    description: >-
-      An individual human being who may be dead or alive, but not
-      imaginary.
-    slots:
-      - identifier
-      - alternativeName
-      - birthName
-      - citizenship
-      - contactPoint
-      - countryOfBirth
-      - countryOfDeath
-      - dateOfBirth
-      - dateOfDeath
-      - domicile
-      - familyName
-      - fullName
-      - gender
-      - givenName
-      - matronymicName
-      - patronymicName
-      - placeOfBirth
-      - placeOfDeath
-      - residency
-      - sex
-
-  Identifier:
-    class_uri: adms:Identifier
-    description: >-
-      A character string used to uniquely identify one instance of
-      an object within an identification scheme.
-    slots:
-      - schemeUri
-      - schemeName
-      - dateOfIssue
-      - identifies
-      - issuingAuthorityUri
-
-  Address:
-    class_uri: locn:Address
-    description: >-
-      An "address representation" as conceptually defined by the
-      INSPIRE Address Representation data type.
-    slots:
-      - thoroughfare
-      - administrativeUnitLevel1
-      - administrativeUnitLevel2
-      - addressArea
-      - postName
-      - locatorName
-      - fullAddress
-
-  ContactPoint:
-    class_uri: m8g:ContactPoint
-    description: >-
-      Information (e.g. e-mail address, telephone number) of a person
-      or department through which the user can get in touch with.
-    slots:
-      - contactPage
-      - hasEmail
-      - hasTelephone
-
-  Agent:
-    class_uri: foaf:Agent
-    description: >-
-      Any entity carrying out actions, typically a person or an
-      organisation.
-    slots:
-      - agentName
-      - agentType
-
-  Jurisdiction:
-    class_uri: dcterms:Jurisdiction
-    description: >-
-      The legal authority — usually a public body — defined by a
-      geographical extent within which it has the power to make legal
-      decisions.
-    slots:
-      - jurisdictionId
-      - jurisdictionName
-
-  Location:
-    class_uri: dcterms:Location
-    description: >-
-      A region or named place. It can be described by a geographic
-      name or geographic identifier.
-    slots:
-      - geographicName
-      - geographicIdentifier
-
-  Document:
-    class_uri: foaf:Document
-    description: A document, e.g. a web page.
-
-  Concept:
-    class_uri: skos:Concept
-    description: >-
-      A SKOS concept, used for controlled vocabularies (e.g. for sex,
-      gender).
-
-# --------------------------------------------------------------------
-# Slots
-# --------------------------------------------------------------------
+      An xsd:anyURI typed RDF literal. This is intentionally not an RDF IRI node.
 
 slots:
-
-  # ------- Person slots -------
-
-  identifier:
-    slot_uri: dcterms:identifier
-    title: identifier
-    description: The unambiguous structured reference to the Person.
-    range: Identifier
+  administrative_unit:
+    slot_uri: m8g:adminUnit
+    range: AdministrativeUnit
     multivalued: true
-
-  alternativeName:
-    slot_uri: dcterms:alternative
-    title: alternative name
-    description: Any name by which a Person is known, other than their full name.
-    range: LangString
+  address_area:
+    slot_uri: locn:addressArea
+    range: lang_string
     multivalued: true
-
-  birthName:
-    slot_uri: person:birthName
-    title: birth name
-    description: Full name of the Person given upon their birth.
-    range: LangString
+    annotations: {semic_unique_lang: true}
+  address_id:
+    slot_uri: locn:addressId
+    range: rdf_literal
     multivalued: true
-
-  citizenship:
-    slot_uri: person:citizenship
-    title: citizenship
-    description: >-
-      The Jurisdiction that has conferred citizenship rights on the
-      Person such as the right to vote, to receive certain protection
-      from the community or the issuance of a passport.
-    range: Jurisdiction
+  admin_unit_l1:
+    slot_uri: locn:adminUnitL1
+    range: lang_string
     multivalued: true
-
-  contactPoint:
-    slot_uri: m8g:contactPoint
-    title: contact point
-    description: The main contact information of the resource.
-    range: ContactPoint
+    annotations: {semic_unique_lang: true}
+  admin_unit_l2:
+    slot_uri: locn:adminUnitL2
+    range: lang_string
     multivalued: true
-
-  countryOfBirth:
-    slot_uri: person:countryOfBirth
-    title: country of birth
-    description: The country in which the Person was born.
-    range: Location
+    annotations: {semic_unique_lang: true}
+  full_address:
+    slot_uri: locn:fullAddress
+    range: lang_string
     multivalued: true
-
-  countryOfDeath:
-    slot_uri: person:countryOfDeath
-    title: country of death
-    description: The country in which the Person died.
-    range: Location
+    annotations: {semic_unique_lang: true}
+  locator_designator:
+    slot_uri: locn:locatorDesignator
+    range: rdf_literal
     multivalued: true
-
-  dateOfBirth:
-    slot_uri: m8g:birthDate
-    title: date of birth
-    description: The point in time on which the Person was born.
+  locator_name:
+    slot_uri: locn:locatorName
+    range: lang_string
     multivalued: true
-    any_of:
-      - range: date
-      - range: gYear
-      - range: gYearMonth
-    comments:
-      - >-
-        The date of birth could be expressed as date, gYearMonth or
-        gYear, e.g. 1980-09-16, 1980-09, 1980.
-    # Demonstrating the annotation channel that closes two long-standing
-    # gaps (see COMPARISON.md "Closed in this run"): `rdfs:seeAlso` to the
-    # spec HTML anchor, and `rdfs:isDefinedBy` to the m8g vocabulary IRI.
-    # Round-trips into the SHACL property shape (with config.yaml
-    # `include_annotations: true`) and into the OWL property declaration
-    # by default. The remaining 30+ slots have not yet been annotated.
-    annotations:
-      rdfs:seeAlso: https://semiceu.github.io/Core-Person-Vocabulary/releases/2.1.1/#Person.birthdate
-      rdfs:isDefinedBy: http://data.europa.eu/m8g
-
-  dateOfDeath:
-    slot_uri: m8g:deathDate
-    title: date of death
-    description: The point in time on which the Person died.
+    annotations: {semic_unique_lang: true}
+  po_box:
+    slot_uri: locn:poBox
+    range: rdf_literal
     multivalued: true
-    any_of:
-      - range: date
-      - range: gYear
-      - range: gYearMonth
-
-  domicile:
-    slot_uri: m8g:domicile
-    title: domicile
-    description: The place that the Person treats as permanent home.
-    range: Address
+  post_code:
+    slot_uri: locn:postCode
+    range: rdf_literal
     multivalued: true
-
-  familyName:
-    slot_uri: foaf:familyName
-    title: family name
-    description: The hereditary surname of a family.
-    range: LangString
+  post_name:
+    slot_uri: locn:postName
+    range: lang_string
     multivalued: true
-
-  fullName:
-    slot_uri: foaf:name
-    title: full name
-    description: The complete name of the Person as one string.
-    range: LangString
+    annotations: {semic_unique_lang: true}
+  thoroughfare:
+    slot_uri: locn:thoroughfare
+    range: lang_string
     multivalued: true
+    annotations: {semic_unique_lang: true}
 
-  gender:
-    slot_uri: m8g:gender
-    title: gender
-    description: The identities, expressions and societal roles of the Person.
-    range: Concept
+  code:
+    slot_uri: m8g:code
+    range: Code
     multivalued: true
-
-  givenName:
-    slot_uri: foaf:givenName
-    title: given name
-    description: The name(s) that identify the Person within a family with a common surname.
-    range: LangString
+  level:
+    slot_uri: m8g:level
+    range: Code
     multivalued: true
-
-  matronymicName:
-    slot_uri: m8g:matronymicName
-    title: matronymic name
-    description: Name based on the given name of the Person's mother.
-    range: LangString
-    multivalued: true
-
-  patronymicName:
-    slot_uri: person:patronymicName
-    title: patronymic name
-    description: Name based on the given name of the Person's father.
-    range: LangString
-    multivalued: true
-
-  placeOfBirth:
-    slot_uri: person:placeOfBirth
-    title: place of birth
-    description: The Location where the Person was born.
-    range: Location
-    multivalued: true
-
-  placeOfDeath:
-    slot_uri: person:placeOfDeath
-    title: place of death
-    description: The Location where the Person died.
-    range: Location
-    multivalued: true
-
-  residency:
-    slot_uri: person:residency
-    title: residency
-    description: Jurisdiction where the Person has their dwelling.
-    range: Jurisdiction
-    multivalued: true
-
-  sex:
-    slot_uri: m8g:sex
-    title: sex
-    description: The organism's biological sex.
-    range: Concept
-    multivalued: true
-
-  # ------- Identifier slots -------
-
-  schemeUri:
-    slot_uri: dcterms:conformsTo
-    title: scheme URI
-    description: URI of the scheme used to construct the identifier.
-    range: uri
-    multivalued: true
-
-  schemeName:
+  label:
     slot_uri: rdfs:label
-    title: scheme name
-    description: Name of the scheme used to construct the identifier.
-    range: LangString
+    range: lang_string
+    multivalued: true
+    annotations: {semic_unique_lang: true}
+
+  agent_name:
+    slot_uri: dct:title
+    range: lang_string
+    multivalued: true
+    annotations: {semic_unique_lang: true}
+  agent_type:
+    slot_uri: dct:type
+    range: Code
     multivalued: true
 
-  dateOfIssue:
-    slot_uri: dcterms:issued
-    title: date of issue
-    description: The date on which the Identifier was assigned.
-    range: date
+  contact_page:
+    slot_uri: m8g:contactPage
+    range: Document
+    multivalued: true
+  email:
+    slot_uri: m8g:email
+    range: rdf_literal
+    multivalued: true
+  telephone:
+    slot_uri: m8g:telephone
+    range: rdf_literal
     multivalued: true
 
   identifies:
     slot_uri: m8g:identifies
-    title: identifies
-    description: The entity that is referenced by the Identifier.
     range: Person
     multivalued: true
-
-  issuingAuthorityUri:
-    slot_uri: dcterms:creator
-    title: issuing authority URI
-    description: The reference in the form of a Uniform Resource Identifier to the issuing authority.
+  issued_by:
+    slot_uri: dct:creator
     range: Agent
     multivalued: true
-
-  # ------- Address slots -------
-
-  thoroughfare:
-    slot_uri: locn:thoroughfare
-    title: thoroughfare
-    description: The name of a passage or way through from one location to another.
-    range: LangString
+  date_issued:
+    slot_uri: dct:issued
+    range: date
+    multivalued: true
+  notation:
+    slot_uri: skos:notation
+    range: rdf_literal
+    multivalued: true
+  scheme_agency:
+    slot_uri: adms:schemeAgency
+    range: rdf_literal
     multivalued: true
 
-  administrativeUnitLevel1:
-    slot_uri: locn:adminUnitL1
-    title: administrative unit level 1
-    description: The name of the uppermost level of the address, almost always a country.
-    range: LangString
+  jurisdiction_identifier:
+    slot_uri: dct:identifier
+    range: any_uri_literal
     multivalued: true
-
-  administrativeUnitLevel2:
-    slot_uri: locn:adminUnitL2
-    title: administrative unit level 2
-    description: >-
-      The name of a secondary level/region of the address, usually a
-      county, state or other such area that typically encompasses
-      several localities.
-    range: LangString
-    multivalued: true
-
-  addressArea:
-    slot_uri: locn:addressArea
-    title: address area
-    description: The name of a geographic area that groups Addresses.
-    range: LangString
-    multivalued: true
-
-  postName:
-    slot_uri: locn:postName
-    title: post name
-    description: >-
-      A name created and maintained for postal purposes to identify a
-      subdivision of addresses and postal delivery points.
-    range: LangString
-    multivalued: true
-
-  locatorName:
-    slot_uri: locn:locatorName
-    title: locator name
-    description: >-
-      Proper noun(s) applied to the real world entity identified by
-      the locator. The locator name could be the name of the property
-      or complex, of the building or part of the building, or it could
-      be the name of a room inside a building.
-    range: LangString
-    multivalued: true
-
-  fullAddress:
-    slot_uri: locn:fullAddress
-    title: full address
-    description: The complete address written as a string.
-    range: LangString
-    multivalued: true
-
-  # ------- ContactPoint slots -------
-
-  contactPage:
-    slot_uri: m8g:contactPage
-    title: contact page
-    description: A web page that could be used to reach out the Contact Point.
-    range: Document
-    multivalued: true
-
-  hasEmail:
-    slot_uri: m8g:email
-    title: has email
-    description: An electronic address through which the Contact Point can be contacted.
-    range: string
-    multivalued: true
-
-  hasTelephone:
-    slot_uri: m8g:telephone
-    title: has telephone
-    description: A telephone number through which the Contact Point can be contacted.
-    range: string
-    multivalued: true
-
-  # ------- Agent slots -------
-
-  agentName:
-    slot_uri: dcterms:title
-    title: name
-    description: The noun given to the Agent.
-    range: LangString
-    multivalued: true
-
-  agentType:
-    slot_uri: dcterms:type
-    title: type
-    description: A classification assigned to an Agent.
-    range: Concept
-    multivalued: true
-
-  # ------- Jurisdiction slots -------
-
-  jurisdictionId:
-    slot_uri: dcterms:identifier
-    title: id
-    description: A reference in the form of a Uniform Resource Identifier to the Jurisdiction.
-    range: uri
-    multivalued: true
-
-  jurisdictionName:
-    slot_uri: rdfs:label
-    title: name
-    description: A string of characters that represents a Jurisdiction.
-    range: LangString
-    multivalued: true
-
-  # ------- Location slots -------
-
-  geographicName:
-    slot_uri: locn:geographicName
-    title: geographic name
-    description: A textual description for a Location.
-    range: LangString
-    multivalued: true
-
-  geographicIdentifier:
+  geographic_identifier:
     slot_uri: rdfs:seeAlso
-    title: geographic identifier
-    description: A reference in the form of a Uniform Resource Identifier to the Location.
-    range: uri
+    range: any_uri_literal
     multivalued: true
+  geographic_name:
+    slot_uri: locn:geographicName
+    range: lang_string
+    multivalued: true
+    annotations: {semic_unique_lang: true}
+
+  date_of_birth:
+    slot_uri: m8g:birthDate
+    range: rdf_literal
+    multivalued: true
+    description: >-
+      Official SHACL constrains only the RDF node kind to Literal. The documented
+      GenericDate union is not imposed pending a SEMIC Working Group decision.
+  contact_point:
+    slot_uri: m8g:contactPoint
+    range: ContactPoint
+    multivalued: true
+  date_of_death:
+    slot_uri: m8g:deathDate
+    range: rdf_literal
+    multivalued: true
+    description: >-
+      Official SHACL constrains only the RDF node kind to Literal. The documented
+      GenericDate union is not imposed pending a SEMIC Working Group decision.
+  domicile:
+    slot_uri: m8g:domicile
+    range: Address
+    multivalued: true
+  gender:
+    slot_uri: m8g:gender
+    range: Code
+    multivalued: true
+  matronymic_name:
+    slot_uri: m8g:matronymicName
+    range: lang_string
+    multivalued: true
+    annotations: {semic_unique_lang: true}
+  sex:
+    slot_uri: m8g:sex
+    range: Code
+    multivalued: true
+  alternative_name:
+    slot_uri: dct:alternative
+    range: lang_string
+    multivalued: true
+    annotations: {semic_unique_lang: true}
+  person_identifier:
+    slot_uri: dct:identifier
+    range: Identifier
+    multivalued: true
+  birth_name:
+    slot_uri: person:birthName
+    range: lang_string
+    multivalued: true
+    annotations: {semic_unique_lang: true}
+  citizenship:
+    slot_uri: person:citizenship
+    range: Jurisdiction
+    multivalued: true
+  country_of_birth:
+    slot_uri: person:countryOfBirth
+    range: Location
+    multivalued: true
+  country_of_death:
+    slot_uri: person:countryOfDeath
+    range: Location
+    multivalued: true
+  patronymic_name:
+    slot_uri: person:patronymicName
+    range: lang_string
+    multivalued: true
+    annotations: {semic_unique_lang: true}
+  place_of_birth:
+    slot_uri: person:placeOfBirth
+    range: Location
+    multivalued: true
+  place_of_death:
+    slot_uri: person:placeOfDeath
+    range: Location
+    multivalued: true
+  residency:
+    slot_uri: person:residency
+    range: Jurisdiction
+    multivalued: true
+  family_name:
+    slot_uri: foaf:familyName
+    range: lang_string
+    multivalued: true
+    annotations: {semic_unique_lang: true}
+  given_name:
+    slot_uri: foaf:givenName
+    range: lang_string
+    multivalued: true
+    annotations: {semic_unique_lang: true}
+  full_name:
+    slot_uri: foaf:name
+    range: lang_string
+    multivalued: true
+    annotations: {semic_unique_lang: true}
+
+classes:
+  Address:
+    class_uri: locn:Address
+    slots:
+      - administrative_unit
+      - address_area
+      - address_id
+      - admin_unit_l1
+      - admin_unit_l2
+      - full_address
+      - locator_designator
+      - locator_name
+      - po_box
+      - post_code
+      - post_name
+      - thoroughfare
+  AdministrativeUnit:
+    title: Administrative Unit
+    class_uri: m8g:AdminUnit
+    slots: [code, level, label]
+  Agent:
+    class_uri: foaf:Agent
+    slots: [agent_name, agent_type]
+  Code:
+    class_uri: skos:Concept
+  ContactPoint:
+    title: Contact Point
+    class_uri: m8g:ContactPoint
+    slots: [contact_page, email, telephone]
+  Document:
+    class_uri: foaf:Document
+  GenericDate:
+    title: Generic Date
+    class_uri: m8g:GenericDate
+    description: >-
+      Published vocabulary describes date, gYearMonth or gYear; official SHACL
+      currently provides no constraints on this class.
+  Identifier:
+    class_uri: adms:Identifier
+    slots: [identifies, issued_by, date_issued, notation, scheme_agency]
+  Jurisdiction:
+    class_uri: dct:Jurisdiction
+    slots: [jurisdiction_identifier, label]
+  Location:
+    class_uri: dct:Location
+    slots: [geographic_identifier, geographic_name]
+  Person:
+    class_uri: person:Person
+    slots:
+      - date_of_birth
+      - contact_point
+      - date_of_death
+      - domicile
+      - gender
+      - matronymic_name
+      - sex
+      - alternative_name
+      - person_identifier
+      - birth_name
+      - citizenship
+      - country_of_birth
+      - country_of_death
+      - patronymic_name
+      - place_of_birth
+      - place_of_death
+      - residency
+      - family_name
+      - given_name
+      - full_name

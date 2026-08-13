@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "processor": {
+    "name": "pyshacl",
+    "version": "0.40.1",
+    "inference": "none",
+    "advanced": false,
+    "meta_shacl": false,
+    "follow_owl_imports": false,
+    "allow_infos": false,
+    "allow_warnings": false
+  },
+  "profiles": {
+    "core-person-2.1.2": {
+      "status": "pilot-authoritative",
+      "artifacts": ["core-person-shacl"],
+      "notes": "The single official Core Person 2.1.2 SHACL distribution is the pilot authority."
+    }
+  }
+}

@@ -1,0 +1,6 @@
+@prefix ex: <https://example.org/> .
+@prefix person: <http://www.w3.org/ns/person#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+ex:person a person:Person ;
+    foaf:name "Alice"@en, "Alicia"@en .

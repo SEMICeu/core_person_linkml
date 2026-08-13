@@ -1,0 +1,7 @@
+@prefix ex: <https://example.org/> .
+@prefix adms: <http://www.w3.org/ns/adms#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:identifier a adms:Identifier ;
+    dct:issued "2026-05-12T10:00:00Z"^^xsd:dateTime .
