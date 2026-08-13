@@ -1,103 +1,81 @@
-# core-person (LinkML)
+# Core Person (LinkML)
 
-A LinkML approximation of
-[SEMICeu Core Person Vocabulary](https://github.com/SEMICeu/Core-Person-Vocabulary)
-2.1.1, built as a **continuous evaluation harness** for LinkML itself.
+A LinkML candidate for [SEMIC Core Person Vocabulary](https://github.com/SEMICeu/Core-Person-Vocabulary)
+2.1.2, built as a continuous evaluation harness for LinkML and the SEMIC
+toolchain.
 
-## What this is (and isn't)
+## What this is (and is not)
 
-This is a **scoping / demo schema**, not a production Core Person profile.
-The deliverable is the evaluation: by trying to reproduce the upstream SEMIC
-SHACL, OWL, JSON-LD context, and HTML spec from a single LinkML source schema,
-we surface exactly where LinkML can and can't express what Core Person needs.
+This is a **pilot**, not a production specification. The official Core Person
+2.1.2 SHACL distribution remains authoritative.
 
-The findings live in [`COMPARISON.md`](COMPARISON.md) — a running ledger of
-"what matches / what's missing / what LinkML can't yet express". Individual
-gaps get filed as issues under [`issues/`](issues/) and (manually)
-cross-linked to upstream
-[`linkml/linkml`](https://github.com/linkml/linkml) tickets.
+The objective is to test whether one LinkML source can support semantic
+modelling, SHACL generation and automatically generated UML visualisation while
+preserving the meaning of the official SEMIC constraints.
+
+Current evidence is encouraging but incomplete:
+
+- the candidate covers 11 semantic classes and 49 class/property rules;
+- generated and official SHACL have matching counts for every normative
+  constraint component used by Core Person;
+- representative positive and negative RDF fixtures produce equivalent SHACL
+  validation results; and
+- the graphs are not RDF-isomorphic because 106 separately named official
+  property shapes are consolidated into 49 generated property shapes.
+
+See [`COMPARISON.md`](COMPARISON.md) for the evidence and remaining decisions.
 
 ## How it works
 
-```
-src/core_person/schema/core_person.yaml      ← the only hand-edited file
-            │
-            │  just gen-project / just gen-doc
-            ▼
-project/{shacl,owl,jsonschema,...}           ← generated artefacts
-docs/elements/*.md                            ← generated documentation
-src/core_person/datamodel/*.py                ← generated Python / Pydantic
-            │
-            │  diff against
-            ▼
-original/releases/2.1.1/{shacl,voc,context,html,...}   ← upstream truth
-            │
-            ▼
-COMPARISON.md  + issues/issue_*.md            ← what's still off, and why
+```text
+src/core_person/schema/core_person.yaml <- canonical LinkML candidate
+            |
+            +--> project/shacl/         <- generated SHACL
+            +--> project/uml/           <- generated UML visualisation
+            +--> project/reports/       <- comparison evidence
+            |
+            +--> compare with checksum-pinned official Core Person 2.1.2 SHACL
 ```
 
-`original/` is a gitignored clone of
-<https://github.com/SEMICeu/Core-Person-Vocabulary>; refresh it with
-`git clone --depth=1 https://github.com/SEMICeu/Core-Person-Vocabulary
-original`. The clone is read-only — never edit it.
+`src/core_person/schema/core_person_dataset.yaml` is a non-semantic editing wrapper with one
+tree root. It is excluded from SHACL, RDF and OWL publication.
 
-## LinkML version
+## Reproduce
 
-The project intentionally pins both `linkml` and `linkml-runtime` to git
-`linkml/linkml@main` (the linkml repo is now a uv workspace with both
-packages under `packages/`). This is permanent: the whole point is to
-evaluate against unreleased LinkML so we can see what *will* be possible,
-not just what is. Pull the latest commits with:
+Prerequisites: Python 3.12 and [`uv`](https://docs.astral.sh/uv/).
 
 ```bash
-uv sync --group dev --refresh
+uv sync --frozen
+uv run core-person-baseline fetch
+uv run core-person-baseline run
+uv run pytest -q -p no:cacheprovider --basetemp generated/.pytest-tmp
 ```
 
-## Quick start
-
-```bash
-just install      # uv sync --group dev (LinkML from git@main)
-just gen-project  # SHACL, OWL, JSON Schema, ShEx, Pydantic, dataclasses, ...
-just gen-doc      # mkdocs sources under docs/
-just test         # schema regen + pytest + linkml-run-examples
-```
-
-Run `just` with no arguments for the full recipe list.
-
-## Iterative workflow
-
-When something in Core Person doesn't translate cleanly:
-
-1. Document the gap in `COMPARISON.md`.
-2. File it as `issues/issue_<topic>.md` (see the `track-issues` skill in
-   `.claude/skills/`).
-3. Work around it in the LinkML schema if a reasonable approximation
-   exists.
-4. Re-run the `align-model` skill against the latest LinkML `main` to
-   check whether a recent merge has closed the gap.
-
-Both skills (`align-model`, `track-issues`) are stored as Claude Code
-project skills under `.claude/skills/` and are invoked automatically when
-their triggering conditions match.
+The run downloads only checksum-pinned official release files into the ignored
+`generated/` directory. Upstream files are never edited or committed here.
 
 ## Repository layout
 
 | Path | Purpose |
 |---|---|
-| `src/core_person/schema/core_person.yaml` | The LinkML schema — only hand-edited file |
-| `src/core_person/datamodel/` | Generated Python dataclasses + Pydantic |
-| `project/` | Generated SHACL, OWL, JSON Schema, ShEx, GraphQL, Java, TypeScript, Protobuf, SQL DDL, JSON-LD context, prefix map (gitignored) |
-| `docs/elements/` | Generated per-class/per-slot Markdown (gitignored) |
-| `original/` | Read-only clone of SEMICeu/Core-Person-Vocabulary (gitignored) |
-| `tests/data/{valid,invalid}/` | Example data tested by `linkml-run-examples` |
-| `issues/` | Local issue files describing LinkML gaps |
-| `COMPARISON.md` | Running gap analysis between generated and upstream artefacts |
-| `CLAUDE.md` | Operating manual for Claude Code working on the repo |
-| `.claude/skills/` | Project-local Claude Code skills (`align-model`, `track-issues`) |
+| `src/core_person/schema/core_person.yaml` | Canonical LinkML candidate |
+| `src/core_person/schema/core_person_dataset.yaml` | Editing-only tree-root wrapper |
+| `config/traceability/` | SEMIC modelling decisions and extension mapping |
+| `project/` | Locally generated outputs, ignored by Git |
+| `tests/fixtures/core_person/` | Focused RDF behavioural fixtures |
+| `COMPARISON.md` | Human-readable equivalence assessment |
 
-## Credits
+## Governance
 
-Bootstrapped from the
-[linkml-project-copier](https://github.com/dalito/linkml-project-copier)
-template
-([doi:10.5281/zenodo.15163584](https://doi.org/10.5281/zenodo.15163584)).
+No result in this repository becomes an official SEMIC specification without a
+SEMIC Working Group decision. Generated artefacts must not be edited manually;
+change the LinkML source or generator configuration, regenerate, and review the
+resulting diff.
+
+## Relation to the DCAT-AP pilot
+
+This repository follows the evaluation-harness model established by
+[`SEMICeu/dcat_ap_linkml`](https://github.com/SEMICeu/dcat_ap_linkml). Unlike
+the fixed 1.11.1 baseline used to establish the first 2.1.2 results, the main
+project continues to evaluate the commit-pinned `linkml/main` versions recorded
+in `uv.lock`. Every comparison report must record the exact LinkML version used.

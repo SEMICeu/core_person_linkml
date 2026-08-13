@@ -3,10 +3,10 @@
 # a `LangString`-ranged slot (`fullName`), an object-ranged slot
 # (`countryOfBirth` → Location), and the `any_of` date disjunction
 # (`dateOfBirth`).
-fullName:
+full_name:
   - Alice Example
-countryOfBirth:
-  - geographicName:
+country_of_birth:
+  - geographic_name:
       - Wonderland
-dateOfBirth:
+date_of_birth:
   - "1990-01-15"

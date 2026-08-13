@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "captured_at": "2026-08-13",
+  "repositories": {
+    "core-person": {
+      "url": "https://github.com/SEMICeu/Core-Person-Vocabulary.git",
+      "commit": "a1b13f2bed9fd97b28420b0cef7f0032da08d148",
+      "raw_base": "https://raw.githubusercontent.com/SEMICeu/Core-Person-Vocabulary"
+    }
+  },
+  "artifacts": [
+    {"id":"core-person-shacl","repository":"core-person","path":"releases/2.1.2/shacl/core-person-ap-SHACL.ttl","bytes":62963,"sha256":"303c82d8f321dad1b3dc8675a112f490d57de9b8cfde3cd844916995cbdde53f","role":"authoritative-shacl"},
+    {"id":"core-person-vocabulary","repository":"core-person","path":"releases/2.1.2/voc/core-person-ap.ttl","bytes":7272,"sha256":"dcab0a5f35c71ffb14b7f6d392a9416b6446744e9f121e98c5611963677a1542","role":"reference-rdf"},
+    {"id":"core-person-context","repository":"core-person","path":"releases/2.1.2/context/core-person-ap.jsonld","bytes":8122,"sha256":"8e2d305ddeaa6718864f1d49d98e9a2337e172f2b806580d8176775d5928f316","role":"reference-jsonld-context"},
+    {"id":"core-person-example","repository":"core-person","path":"releases/2.1.2/html/examples/example-rdf_person.ttl","bytes":1553,"sha256":"b43ca760f96ac30969087acf5743c372af5184e14678d7ddca9ff6f6dab3b4f6","role":"official-example"},
+    {"id":"core-person-eap","repository":"core-person","path":"releases/2.1.2/uml/CoreVocabularies.EAP","bytes":4261888,"sha256":"03531569f6f316cbe3f6b80a8724dfb91a3e4f77a583da6a3a72510a02e6045d","role":"legacy-authoring-evidence"}
+  ]
+}

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "core_person"
-description = "LinkML approximation of SEMIC Core Person Vocabulary 2.1.1"
+description = "LinkML evaluation harness for SEMIC Core Person Vocabulary 2.1.2"
 authors = [
   {name = "Nico Matentzoglu", email = "nicolas.matentzoglu@gmail.com"},
 ]
@@ -18,6 +18,9 @@ dependencies = [
   "linkml-runtime @ git+https://github.com/linkml/linkml.git@main#subdirectory=packages/linkml_runtime",
 ]
 
+[project.scripts]
+core-person-baseline = "core_person.baseline:main"
+
 [dependency-groups]
 dev = [
     "linkml @ git+https://github.com/linkml/linkml.git@main#subdirectory=packages/linkml",
@@ -26,6 +29,8 @@ dev = [
     "mkdocs-pymdownx-material-extras>=2.5.6",
     "jupyter>=1.0.0",
     "mknotebooks>= 0.8.0",
+    "pyshacl==0.40.1",
+    "rdflib==7.6.0",
 ]
 
 # See https://hatch.pypa.io/latest/config/build/#file-selection for how to

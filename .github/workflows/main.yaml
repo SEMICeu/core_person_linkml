@@ -54,5 +54,8 @@ jobs:
       - name: Install project
         run: uv sync --dev
 
+      - name: Fetch checksum-pinned Core Person 2.1.2 inputs
+        run: uv run core-person-baseline fetch
+
       - name: Run test suite
         run: just test

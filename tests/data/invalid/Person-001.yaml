@@ -1,5 +1,2 @@
-# Invalid Person: `fullName` is multivalued with range LangString, so
-# every entry must be a string. Passing an integer (`42`) violates the
-# datatype constraint and `linkml-run-examples` should reject this.
-fullName:
-  - 42
+# Invalid Person: this property is not defined by the LinkML schema.
+definitely_not_a_core_person_property: unexpected
